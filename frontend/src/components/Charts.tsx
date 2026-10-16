@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -29,12 +29,21 @@ ChartJS.register(
   Filler
 );
 
-interface BarChartProps {
+interface ChartProps {
   data: any;
   options?: any;
 }
 
-export function CyberBarChart({ data, options }: BarChartProps) {
+export function CyberBarChart({ data, options }: ChartProps) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return <div className="w-full h-full animate-pulse bg-slate-900/40 rounded-xl" />;
+  }
+
   const defaultOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -68,12 +77,16 @@ export function CyberBarChart({ data, options }: BarChartProps) {
   return <Bar data={data} options={defaultOptions} />;
 }
 
-interface LineChartProps {
-  data: any;
-  options?: any;
-}
+export function CyberLineChart({ data, options }: ChartProps) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
-export function CyberLineChart({ data, options }: LineChartProps) {
+  if (!mounted) {
+    return <div className="w-full h-full animate-pulse bg-slate-900/40 rounded-xl" />;
+  }
+
   const defaultOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -106,12 +119,16 @@ export function CyberLineChart({ data, options }: LineChartProps) {
   return <Line data={data} options={defaultOptions} />;
 }
 
-interface DoughnutChartProps {
-  data: any;
-  options?: any;
-}
+export function CyberDoughnutChart({ data, options }: ChartProps) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
-export function CyberDoughnutChart({ data, options }: DoughnutChartProps) {
+  if (!mounted) {
+    return <div className="w-full h-full animate-pulse bg-slate-900/40 rounded-xl" />;
+  }
+
   const defaultOptions = {
     responsive: true,
     maintainAspectRatio: false,

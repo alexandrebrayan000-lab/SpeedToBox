@@ -195,8 +195,8 @@ export function TopBar() {
       <div className="flex items-center gap-3">
         {/* Real-time Clock */}
         <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#080D20] border border-cyan-500/20 text-xs font-mono text-cyan-300">
-          <Clock className="w-3.5 h-3.5 text-cyan-400 animate-spin-slow" />
-          <span>{timeStr || '14:30:00'}</span>
+          <Clock className="w-3.5 h-3.5 text-cyan-400" />
+          <span suppressHydrationWarning>{timeStr || '--:--:--'}</span>
         </div>
 
         {/* Quick Action: New Sale */}
