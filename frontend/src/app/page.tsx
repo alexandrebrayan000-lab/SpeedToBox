@@ -125,15 +125,15 @@ export default function DashboardPage() {
 
         {/* Period Selector & Quick Actions */}
         <div className="flex flex-wrap items-center gap-2">
-          <div className="bg-[#0B1228] p-1 rounded-xl border border-[#168BFF]/25 flex items-center gap-1 text-xs">
+          <div className="bg-[#0B1228] p-1.5 rounded-xl border border-[#168BFF]/25 flex items-center gap-1.5 text-xs">
             {(['hoje', '7d', '30d'] as const).map(p => (
               <button
                 key={p}
                 onClick={() => setPeriodo(p)}
-                className={`px-2.5 py-1 rounded-lg transition-all ${
+                className={`px-3.5 py-1.5 rounded-lg transition-all font-semibold ${
                   periodo === p
-                    ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 font-bold'
-                    : 'text-slate-400 hover:text-white'
+                    ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-[0_0_10px_rgba(0,217,255,0.25)]'
+                    : 'text-slate-400 hover:text-white hover:bg-slate-800/40'
                 }`}
               >
                 {p === 'hoje' ? 'Hoje' : p === '7d' ? '7 dias' : '30 dias'}

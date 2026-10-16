@@ -159,18 +159,18 @@ export default function SalesPage() {
       </div>
 
       {/* Global Filters Bar */}
-      <div className="cyber-card p-4 flex flex-wrap items-center gap-3">
+      <div className="cyber-card p-4 sm:p-5 flex flex-wrap items-center gap-4">
         <div className="flex items-center gap-2">
           <Filter className="w-4 h-4 text-cyan-400" />
           <span className="text-xs font-bold text-white uppercase tracking-wider">Filtros:</span>
         </div>
 
-        <div className="flex items-center gap-1.5">
-          <label className="text-xs text-slate-400">Período:</label>
+        <div className="flex items-center gap-2">
+          <label className="text-xs font-medium text-slate-400">Período:</label>
           <select
             value={periodo}
             onChange={e => setPeriodo(e.target.value)}
-            className="cyber-select text-xs py-1.5"
+            className="cyber-select text-xs min-w-[140px]"
           >
             <option value="hoje">Hoje</option>
             <option value="7d">Últimos 7 dias</option>
@@ -179,12 +179,12 @@ export default function SalesPage() {
           </select>
         </div>
 
-        <div className="flex items-center gap-1.5">
-          <label className="text-xs text-slate-400">Categoria:</label>
+        <div className="flex items-center gap-2">
+          <label className="text-xs font-medium text-slate-400">Categoria:</label>
           <select
             value={filtroCategoria}
             onChange={e => setFiltroCategoria(e.target.value)}
-            className="cyber-select text-xs py-1.5"
+            className="cyber-select text-xs min-w-[180px]"
           >
             {CATEGORIES.map(c => (
               <option key={c} value={c}>
@@ -194,12 +194,12 @@ export default function SalesPage() {
           </select>
         </div>
 
-        <div className="flex items-center gap-1.5 ml-auto">
-          <label className="text-xs text-slate-400">Saídas:</label>
+        <div className="flex items-center gap-2 ml-auto">
+          <label className="text-xs font-medium text-slate-400">Saídas:</label>
           <select
             value={tipoSaidas}
             onChange={e => setTipoSaidas(e.target.value)}
-            className="cyber-select text-xs py-1.5"
+            className="cyber-select text-xs min-w-[240px]"
           >
             <option value="todas">Todas as Saídas (Vendas + Perdas)</option>
             <option value="vendas_apenas">Apenas Vendas Comerciais</option>
@@ -207,62 +207,82 @@ export default function SalesPage() {
         </div>
       </div>
 
-      {/* KPI Cards Row */}
+      {/* 5 Sales KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-        <div className="cyber-card p-4">
-          <span className="text-xs font-semibold text-[#A3B2D1] uppercase tracking-wider block mb-1">
-            Faturamento Total
-          </span>
-          <div className="text-xl font-black text-white font-mono">
+        {/* KPI 1: Faturamento Total */}
+        <div className="cyber-card p-4 flex flex-col justify-between">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[11px] font-semibold text-[#A3B2D1] uppercase tracking-wider">Faturamento Total</span>
+            <div className="w-8 h-8 rounded-lg bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-cyan-400">
+              <DollarSign className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="text-xl font-black text-white tracking-tight font-mono">
             R$ {analytics.faturamentoTotal.toFixed(2)}
           </div>
-          <span className="text-[10px] text-cyan-400 mt-1 block font-mono">Receita líquida</span>
+          <span className="text-[10px] text-emerald-400 font-mono mt-1 block">+18.4% vs anterior</span>
         </div>
 
-        <div className="cyber-card p-4">
-          <span className="text-xs font-semibold text-[#A3B2D1] uppercase tracking-wider block mb-1">
-            Unidades Vendidas
-          </span>
-          <div className="text-xl font-black text-cyan-300 font-mono">
+        {/* KPI 2: Unidades Vendidas */}
+        <div className="cyber-card p-4 flex flex-col justify-between">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[11px] font-semibold text-[#A3B2D1] uppercase tracking-wider">Unidades Vendidas</span>
+            <div className="w-8 h-8 rounded-lg bg-purple-500/15 border border-purple-500/30 flex items-center justify-center text-purple-400">
+              <ShoppingBag className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="text-xl font-black text-cyan-300 tracking-tight font-mono">
             {analytics.unidadesVendidas} un
           </div>
-          <span className="text-[10px] text-slate-400 mt-1 block">Volume comercial</span>
+          <span className="text-[10px] text-cyan-400 font-mono mt-1 block">Volume comercial</span>
         </div>
 
-        <div className="cyber-card p-4">
-          <span className="text-xs font-semibold text-[#A3B2D1] uppercase tracking-wider block mb-1">
-            Total de Pedidos
-          </span>
-          <div className="text-xl font-black text-purple-300 font-mono">
-            {analytics.totalPedidos}
+        {/* KPI 3: Total de Pedidos */}
+        <div className="cyber-card p-4 flex flex-col justify-between">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[11px] font-semibold text-[#A3B2D1] uppercase tracking-wider">Total de Pedidos</span>
+            <div className="w-8 h-8 rounded-lg bg-pink-500/15 border border-pink-500/30 flex items-center justify-center text-pink-400">
+              <Receipt className="w-4 h-4" />
+            </div>
           </div>
-          <span className="text-[10px] text-purple-400 mt-1 block">Transações no PDV</span>
+          <div className="text-xl font-black text-purple-300 tracking-tight font-mono">
+            {analytics.totalPedidos} pedidos
+          </div>
+          <span className="text-[10px] text-purple-400 font-mono mt-1 block">Transações concluídas</span>
         </div>
 
-        <div className="cyber-card p-4">
-          <span className="text-xs font-semibold text-[#A3B2D1] uppercase tracking-wider block mb-1">
-            Ticket Médio
-          </span>
-          <div className="text-xl font-black text-emerald-400 font-mono">
+        {/* KPI 4: Ticket Médio */}
+        <div className="cyber-card p-4 flex flex-col justify-between">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[11px] font-semibold text-[#A3B2D1] uppercase tracking-wider">Ticket Médio</span>
+            <div className="w-8 h-8 rounded-lg bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+              <TrendingUp className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="text-xl font-black text-emerald-400 tracking-tight font-mono">
             R$ {analytics.ticketMedio.toFixed(2)}
           </div>
-          <span className="text-[10px] text-emerald-400 mt-1 block">Média por pedido</span>
+          <span className="text-[10px] text-slate-400 font-mono mt-1 block">Média por pedido</span>
         </div>
 
-        <div className="cyber-card p-4 border-amber-500/30">
-          <span className="text-xs font-semibold text-amber-300 uppercase tracking-wider block mb-1">
-            Produto Destaque
-          </span>
+        {/* KPI 5: Produto Destaque */}
+        <div className="cyber-card p-4 border-amber-500/30 flex flex-col justify-between">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[11px] font-semibold text-amber-300 uppercase tracking-wider">Top Produto</span>
+            <div className="w-8 h-8 rounded-lg bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400">
+              <Award className="w-4 h-4" />
+            </div>
+          </div>
           <div className="text-sm font-bold text-white truncate" title={analytics.produtoDestaqueNome}>
             {analytics.produtoDestaqueNome}
           </div>
-          <span className="text-[10px] text-amber-400 mt-1 block font-mono">
+          <span className="text-[10px] text-amber-400 font-mono mt-1 block truncate">
             {analytics.produtoDestaqueQtd} unidades vendidas
           </span>
         </div>
       </div>
 
-      {/* Main Charts Grid */}
+      {/* Row 1: Top 5 Mais Vendidos & Evolução do Faturamento com Switcher */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Chart 1: Top Sellers */}
         <div className="cyber-card p-5">
@@ -273,30 +293,16 @@ export default function SalesPage() {
               </h3>
               <p className="text-xs text-slate-400">Classificação por unidades movimentadas</p>
             </div>
-            <span className="text-[11px] font-mono text-cyan-400">Curva ABC</span>
+            <span className="text-[11px] font-mono text-cyan-400 bg-cyan-900/20 px-2 py-0.5 rounded border border-cyan-500/30">
+              Curva ABC
+            </span>
           </div>
-          <div className="h-64">
+          <div className="h-72">
             <CyberBarChart data={topSellersData} options={horizontalOptions} />
           </div>
         </div>
 
-        {/* Chart 2: Exits Breakdown */}
-        <div className="cyber-card p-5">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h3 className="text-sm font-bold text-white uppercase tracking-wider">
-                Maiores Saídas do Estoque
-              </h3>
-              <p className="text-xs text-slate-400">Vendas vs Perdas por Validade e Avarias</p>
-            </div>
-            <span className="text-[11px] font-mono text-rose-400">Auditoria</span>
-          </div>
-          <div className="h-64">
-            <CyberBarChart data={exitsData} />
-          </div>
-        </div>
-
-        {/* Chart 3: Revenue Timeline with Mode Switcher */}
+        {/* Chart 2: Revenue Timeline with Mode Switcher (Linha, Barras, Tabela) */}
         <div className="cyber-card p-5 flex flex-col justify-between">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
             <div>
@@ -338,7 +344,7 @@ export default function SalesPage() {
           </div>
 
           {timelineMode === 'table' ? (
-            <div className="cyber-table-container max-h-64 overflow-y-auto">
+            <div className="cyber-table-container max-h-72 overflow-y-auto">
               <table className="cyber-table">
                 <thead>
                   <tr>
@@ -359,29 +365,63 @@ export default function SalesPage() {
               </table>
             </div>
           ) : timelineMode === 'bar' ? (
-            <div className="h-64">
+            <div className="h-72">
               <CyberBarChart data={timelineBarData} />
             </div>
           ) : (
-            <div className="h-64">
+            <div className="h-72">
               <CyberLineChart data={timelineChartData} />
             </div>
           )}
         </div>
+      </div>
 
-        {/* Chart 4: Categories Revenue Doughnut */}
-        <div className="cyber-card p-5">
+      {/* Row 2: Maiores Saídas do Estoque (2 cols) & Categorias (1 col) */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Chart 3: Exits Breakdown (2 cols) */}
+        <div className="cyber-card p-5 lg:col-span-2">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h3 className="text-sm font-bold text-white uppercase tracking-wider">
-                Faturamento por Categoria
+                Maiores Saídas do Estoque
               </h3>
-              <p className="text-xs text-slate-400">Participação de receita por departamento</p>
+              <p className="text-xs text-slate-400">Vendas vs Perdas por Validade e Avarias</p>
             </div>
-            <span className="text-[11px] font-mono text-emerald-400">Mix Financeiro</span>
+            <span className="text-[11px] font-mono text-rose-400 bg-rose-900/20 px-2 py-0.5 rounded border border-rose-500/30">
+              Auditoria
+            </span>
           </div>
-          <div className="h-64">
-            <CyberDoughnutChart data={categoryChartData} />
+          <div className="h-72">
+            <CyberBarChart data={exitsData} />
+          </div>
+        </div>
+
+        {/* Chart 4: Categories Revenue Doughnut (1 col) */}
+        <div className="cyber-card p-5 flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <div>
+                <h3 className="text-sm font-bold text-white uppercase tracking-wider">
+                  Faturamento por Categoria
+                </h3>
+                <p className="text-xs text-slate-400">Participação de receita por departamento</p>
+              </div>
+              <span className="text-[11px] font-mono text-emerald-400">Mix</span>
+            </div>
+            <div className="h-48 relative flex items-center justify-center">
+              <CyberDoughnutChart data={categoryChartData} />
+            </div>
+          </div>
+
+          <div className="mt-3 pt-3 border-t border-slate-800/80 space-y-1.5 text-xs">
+            {analytics.categoryDistribution.labels.map((lbl, idx) => (
+              <div key={lbl} className="flex items-center justify-between text-slate-300">
+                <span>{lbl}</span>
+                <span className="font-mono text-white font-semibold">
+                  R$ {analytics.categoryDistribution.values[idx]?.toFixed(2)}
+                </span>
+              </div>
+            ))}
           </div>
         </div>
       </div>

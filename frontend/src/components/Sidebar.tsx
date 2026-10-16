@@ -43,6 +43,7 @@ export function Sidebar({ isCollapsed, onToggleCollapse }: SidebarProps) {
   return (
     <aside
       className={`h-screen fixed top-0 left-0 z-40 bg-[#080D20]/95 backdrop-blur-xl border-r border-[#168BFF]/15 flex flex-col justify-between transition-all duration-300 ${widthClass}`}
+      style={{ width: isCollapsed ? '80px' : '256px' }}
     >
       {/* Top Brand Area */}
       <div>

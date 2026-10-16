@@ -96,7 +96,7 @@ export default function MovementsPage() {
           />
         </div>
 
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-2">
           <label className="text-xs text-slate-400">Tipo de Movimentação:</label>
           <select
             value={tipoFiltro}
@@ -104,7 +104,7 @@ export default function MovementsPage() {
               setTipoFiltro(e.target.value);
               setCurrentPage(1);
             }}
-            className="cyber-select text-xs py-1.5"
+            className="cyber-select text-xs min-w-[240px]"
           >
             <option value="todos">Todos os tipos</option>
             <option value="entrada">Entrada (+) [Abastecimento]</option>

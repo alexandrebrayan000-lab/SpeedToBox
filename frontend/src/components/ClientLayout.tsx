@@ -54,7 +54,16 @@ function LayoutShell({ children }: { children: React.ReactNode }) {
       />
 
       {/* Main Content Area */}
-      <div className={`flex-1 ${offsetClass} flex flex-col min-h-screen transition-all duration-300 relative z-10`}>
+      <div
+        className={`flex-1 flex flex-col min-h-screen transition-all duration-300 relative z-10 ${
+          isSidebarCollapsed ? 'sidebar-offset-collapsed' : 'sidebar-offset-expanded'
+        }`}
+        style={{
+          marginLeft: isSidebarCollapsed ? '80px' : '256px',
+          width: isSidebarCollapsed ? 'calc(100% - 80px)' : 'calc(100% - 256px)',
+          minWidth: 0
+        }}
+      >
         <TopBar />
 
         <main className="flex-1 p-6 lg:p-8 max-w-[1600px] w-full mx-auto">

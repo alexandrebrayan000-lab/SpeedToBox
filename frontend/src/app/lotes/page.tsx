@@ -169,12 +169,12 @@ export default function LotsPage() {
           />
         </div>
 
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-2">
           <label className="text-xs text-slate-400">Status do Lote:</label>
           <select
             value={statusFiltro}
             onChange={e => setStatusFiltro(e.target.value)}
-            className="cyber-select text-xs py-1.5"
+            className="cyber-select text-xs min-w-[220px]"
           >
             <option value="todos">Todos os lotes</option>
             <option value="normal">Normal / No Prazo</option>

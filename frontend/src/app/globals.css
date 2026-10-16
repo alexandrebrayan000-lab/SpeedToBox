@@ -278,21 +278,49 @@ body {
   background: rgba(11, 18, 40, 0.95);
 }
 
+/* Layout Sidebar Offsets to prevent any content overlap */
+.sidebar-offset-expanded {
+  margin-left: 256px !important;
+  width: calc(100% - 256px) !important;
+  max-width: calc(100% - 256px) !important;
+}
+
+.sidebar-offset-collapsed {
+  margin-left: 80px !important;
+  width: calc(100% - 80px) !important;
+  max-width: calc(100% - 80px) !important;
+}
+
 .cyber-select {
   background-color: #0B1228;
-  border: 1px solid rgba(22, 139, 255, 0.25);
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2300D9FF' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 0.75rem center;
+  background-repeat: no-repeat;
+  background-size: 1.15em 1.15em;
+  border: 1px solid rgba(22, 139, 255, 0.3);
   border-radius: 10px;
-  padding: 8px 12px;
+  padding: 8px 36px 8px 14px;
   color: #F4F7FF;
   font-size: 13px;
+  font-weight: 500;
   outline: none;
   cursor: pointer;
   transition: all 0.2s ease;
+  min-height: 38px;
+  appearance: none;
+  -webkit-appearance: none;
 }
 
 .cyber-select:focus {
   border-color: #00D9FF;
-  box-shadow: 0 0 12px rgba(0, 217, 255, 0.3);
+  box-shadow: 0 0 14px rgba(0, 217, 255, 0.35);
+  background-color: #101A35;
+}
+
+.cyber-select option {
+  background-color: #0B1228;
+  color: #F4F7FF;
+  padding: 8px;
 }
 
 /* Tables */

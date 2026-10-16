@@ -87,7 +87,7 @@ export default function ProductsPage() {
         </div>
 
         {/* Category filter */}
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-2">
           <label className="text-xs text-slate-400">Categoria:</label>
           <select
             value={categoriaFiltro}
@@ -95,18 +95,18 @@ export default function ProductsPage() {
               setCategoriaFiltro(e.target.value);
               setCurrentPage(1);
             }}
-            className="cyber-select text-xs py-1.5"
+            className="cyber-select text-xs min-w-[160px]"
           >
             {CATEGORIES.map(c => (
               <option key={c} value={c}>
-                {c === 'todas' ? 'Todas' : c}
+                {c === 'todas' ? 'Todas as Categorias' : c}
               </option>
             ))}
           </select>
         </div>
 
         {/* Status filter */}
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-2">
           <label className="text-xs text-slate-400">Status:</label>
           <select
             value={statusFiltro}
@@ -114,7 +114,7 @@ export default function ProductsPage() {
               setStatusFiltro(e.target.value);
               setCurrentPage(1);
             }}
-            className="cyber-select text-xs py-1.5"
+            className="cyber-select text-xs min-w-[160px]"
           >
             <option value="todos">Todos os status</option>
             <option value="normal">Normal</option>

@@ -106,12 +106,12 @@ export default function AlertsPage() {
 
       {/* Filter Bar */}
       <div className="cyber-card p-4 flex flex-wrap items-center gap-3">
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-2">
           <label className="text-xs text-slate-400">Prioridade:</label>
           <select
             value={prioridadeFiltro}
             onChange={e => setPrioridadeFiltro(e.target.value)}
-            className="cyber-select text-xs py-1.5"
+            className="cyber-select text-xs min-w-[190px]"
           >
             <option value="todas">Todas as prioridades</option>
             <option value="alta">Alta (Crítico)</option>
@@ -120,12 +120,12 @@ export default function AlertsPage() {
           </select>
         </div>
 
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-2">
           <label className="text-xs text-slate-400">Tipo de Risco:</label>
           <select
             value={tipoFiltro}
             onChange={e => setTipoFiltro(e.target.value)}
-            className="cyber-select text-xs py-1.5"
+            className="cyber-select text-xs min-w-[210px]"
           >
             <option value="todos">Todos os tipos</option>
             <option value="lote_vencido">Lotes Vencidos</option>
