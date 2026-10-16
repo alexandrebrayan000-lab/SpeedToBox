@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SpeedToBox — Sistema de Controle de Estoque & Vendas Cyberpunk Neon</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2300D9FF'><polygon points='12,2 21,7 12,12 3,7'/><polygon points='3,7 12,12 12,22 3,17'/><polygon points='12,12 21,7 21,17 12,22'/></svg>">
+
+  <!-- Google Fonts: Inter & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            cyber: {
+              bgPrimary: '#050816',
+              bgSecondary: '#080D20',
+              bgCard: '#0B1228',
+              surface: '#101A35',
+              surfaceHover: '#142245',
+              blue: '#168BFF',
+              cyan: '#00D9FF',
+              purple: '#8B35FF',
+              pink: '#F32BFF',
+              success: '#00E6A0',
+              warning: '#FFBF3F',
+              danger: '#FF3864'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            display: ['Outfit', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Custom Cyberpunk Design System Styles -->
+  <link rel="stylesheet" href="./src/css/style.css">
+</head>
+<body class="bg-[#050816] text-[#F4F7FF] antialiased selection:bg-[#8B35FF] selection:text-white">
+
+  <!-- Global Ambient Cyberpunk Neon Canvas Background -->
+  <canvas id="neon-canvas-bg"></canvas>
+
+  <!-- Main Root Layout -->
+  <div id="app-root" class="relative z-10 min-h-screen flex">
+    <!-- Sidebar Mount -->
+    <aside id="sidebar-mount" class="flex-shrink-0"></aside>
+
+    <!-- Main Content Container with responsive offset -->
+    <div id="main-content-container" class="flex-1 ml-64 flex flex-col min-h-screen transition-all duration-300">
+      <!-- TopBar Mount -->
+      <header id="topbar-mount" class="w-full"></header>
+
+      <!-- Dynamic Page View Mount -->
+      <main id="view-content-mount" class="flex-1 p-6 lg:p-8 max-w-[1600px] w-full mx-auto"></main>
+
+      <!-- Minimal Cyberpunk Footer -->
+      <footer class="py-4 px-8 border-t border-[#168BFF]/10 text-center text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-2">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+          <span>SpeedToBox v2.0 Enterprise • Painel Cyberpunk Neon</span>
+        </div>
+        <div class="flex items-center gap-4 text-[11px] text-slate-400">
+          <span>Atalhos: <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-cyan-300 font-mono">Ctrl+N</kbd> Nova Venda</span>
+          <span><kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-purple-300 font-mono">Ctrl+P</kbd> Novo Produto</span>
+        </div>
+      </footer>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="./src/js/neonCanvas.js"></script>
+  <script src="./src/js/dataStore.js"></script>
+  <script src="./src/js/components/Toast.js"></script>
+  <script src="./src/js/components/Modals.js"></script>
+  <script src="./src/js/components/Sidebar.js"></script>
+  <script src="./src/js/components/TopBar.js"></script>
+  <script src="./src/js/components/DashboardView.js"></script>
+  <script src="./src/js/components/SalesView.js"></script>
+  <script src="./src/js/components/ProductsView.js"></script>
+  <script src="./src/js/components/LotsView.js"></script>
+  <script src="./src/js/components/MovementsView.js"></script>
+  <script src="./src/js/components/ReportsView.js"></script>
+  <script src="./src/js/components/AlertsView.js"></script>
+  <script src="./src/js/components/SettingsView.js"></script>
+  <script src="./src/js/app.js"></script>
+</body>
+</html>
