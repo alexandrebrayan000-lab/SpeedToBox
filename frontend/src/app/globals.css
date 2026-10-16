@@ -1,0 +1,200 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   SPEEDTOBOX CYBERPUNK NEON DESIGN SYSTEM
+   Palette & Design Tokens
+   ========================================================================== */
+
+:root {
+  --bg-primary: #050816;
+  --bg-secondary: #080D20;
+  --bg-card: #0B1228;
+  --surface-elevated: #101A35;
+  --surface-hover: #142245;
+
+  --neon-blue: #168BFF;
+  --neon-cyan: #00D9FF;
+  --neon-purple: #8B35FF;
+  --neon-pink: #F32BFF;
+
+  --status-success: #00E6A0;
+  --status-warning: #FFBF3F;
+  --status-danger: #FF3864;
+
+  --text-primary: #F4F7FF;
+  --text-secondary: #A3B2D1;
+  --text-muted: #64748B;
+
+  --border-subtle: rgba(22, 139, 255, 0.15);
+  --border-glow: rgba(0, 217, 255, 0.35);
+  --border-purple: rgba(139, 53, 255, 0.3);
+
+  --glow-blue: 0 0 15px rgba(22, 139, 255, 0.35);
+  --glow-cyan: 0 0 20px rgba(0, 217, 255, 0.4);
+  --glow-purple: 0 0 20px rgba(139, 53, 255, 0.4);
+  --glow-pink: 0 0 20px rgba(243, 43, 255, 0.4);
+
+  --font-main: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-display: 'Outfit', sans-serif;
+}
+
+/* Global Reset & Base */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  background-color: #050816;
+  color: #F4F7FF;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  overflow-x: hidden;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #050816;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(22, 139, 255, 0.3);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 217, 255, 0.6);
+  box-shadow: 0 0 8px rgba(0, 217, 255, 0.5);
+}
+
+/* Glassmorphism card surfaces */
+.cyber-card {
+  background: linear-gradient(145deg, rgba(11, 18, 40, 0.85) 0%, rgba(7, 12, 28, 0.95) 100%);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(22, 139, 255, 0.2);
+  border-radius: 1rem;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.cyber-card:hover {
+  border-color: rgba(0, 217, 255, 0.35);
+  box-shadow: 0 12px 35px -8px rgba(0, 217, 255, 0.15), inset 0 1px 0 rgba(0, 217, 255, 0.15);
+}
+
+/* Glowing Neon Buttons */
+.btn-cyber-primary {
+  background: linear-gradient(135deg, #8B35FF 0%, #6824D6 100%);
+  color: #FFFFFF;
+  border: 1px solid rgba(243, 43, 255, 0.4);
+  box-shadow: 0 0 18px rgba(139, 53, 255, 0.45);
+  border-radius: 0.75rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.25s ease;
+  cursor: pointer;
+}
+
+.btn-cyber-primary:hover {
+  background: linear-gradient(135deg, #A455FF 0%, #7A2FE6 100%);
+  box-shadow: 0 0 25px rgba(243, 43, 255, 0.65);
+  transform: translateY(-1px);
+}
+
+.btn-cyber-secondary {
+  background: rgba(16, 26, 53, 0.85);
+  color: #F4F7FF;
+  border: 1px solid rgba(22, 139, 255, 0.3);
+  box-shadow: 0 0 12px rgba(22, 139, 255, 0.15);
+  border-radius: 0.75rem;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.25s ease;
+  cursor: pointer;
+}
+
+.btn-cyber-secondary:hover {
+  background: rgba(20, 34, 69, 0.95);
+  border-color: rgba(0, 217, 255, 0.5);
+  color: #00D9FF;
+  box-shadow: 0 0 18px rgba(0, 217, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+/* Cyber Form Inputs & Selects */
+.cyber-select, .cyber-input {
+  background: rgba(11, 18, 40, 0.95);
+  color: #F4F7FF;
+  border: 1px solid rgba(22, 139, 255, 0.35);
+  border-radius: 0.625rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  outline: none;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.cyber-select:hover, .cyber-input:hover {
+  border-color: rgba(0, 217, 255, 0.55);
+  box-shadow: 0 0 10px rgba(0, 217, 255, 0.2);
+}
+
+.cyber-select:focus, .cyber-input:focus {
+  border-color: #00D9FF;
+  box-shadow: 0 0 15px rgba(0, 217, 255, 0.4);
+}
+
+.cyber-select option {
+  background-color: #0B1228;
+  color: #F4F7FF;
+  padding: 8px;
+}
+
+/* Custom chart switcher active pill */
+.switcher-active {
+  background: linear-gradient(135deg, rgba(0, 217, 255, 0.25) 0%, rgba(22, 139, 255, 0.2) 100%);
+  color: #00D9FF;
+  border: 1px solid rgba(0, 217, 255, 0.6);
+  box-shadow: 0 0 14px rgba(0, 217, 255, 0.35);
+}
+
+.switcher-inactive {
+  background: rgba(11, 18, 40, 0.7);
+  color: #94A3B8;
+  border: 1px solid rgba(22, 139, 255, 0.15);
+}
+
+.switcher-inactive:hover {
+  background: rgba(16, 26, 53, 0.9);
+  color: #F4F7FF;
+  border-color: rgba(22, 139, 255, 0.4);
+}
+
+/* Ambient Canvas Background */
+#neon-canvas-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+}
