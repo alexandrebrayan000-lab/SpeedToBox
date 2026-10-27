@@ -40,51 +40,46 @@ function LayoutShell({ children }: { children: React.ReactNode }) {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [setIsNewSaleOpen, setIsNewProductOpen, setMovementModal, setReportPreview]);
 
-  const offsetClass = isSidebarCollapsed ? 'ml-20' : 'ml-64';
-
   return (
-    <div className="relative z-10 min-h-screen flex" suppressHydrationWarning>
-      {/* Dynamic Ambient Neon Canvas */}
+    <div className="min-h-screen bg-[#050816] text-[#F4F7FF]" suppressHydrationWarning>
+      {/* Dynamic Ambient Neon Canvas — fora do contexto z-10 */}
       {mounted && <NeonCanvas />}
 
-      {/* Sidebar */}
-      <Sidebar
-        isCollapsed={isSidebarCollapsed}
-        onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-      />
+      {/* Layout principal acima do canvas */}
+      <div className="relative z-10 min-h-screen flex">
+        {/* Sidebar */}
+        <Sidebar
+          isCollapsed={isSidebarCollapsed}
+          onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+        />
 
-      {/* Main Content Area */}
-      <div
-        className={`flex-1 flex flex-col min-h-screen transition-all duration-300 relative z-10 ${
-          isSidebarCollapsed ? 'sidebar-offset-collapsed' : 'sidebar-offset-expanded'
-        }`}
-        style={{
-          marginLeft: isSidebarCollapsed ? '80px' : '256px',
-          width: isSidebarCollapsed ? 'calc(100% - 80px)' : 'calc(100% - 256px)',
-          minWidth: 0
-        }}
-      >
-        <TopBar />
+        {/* Main Content Area */}
+        <div
+          className="flex-1 flex flex-col min-h-screen transition-all duration-300 min-w-0 overflow-hidden"
+          style={{ marginLeft: isSidebarCollapsed ? '80px' : '256px' }}
+        >
+          <TopBar />
 
-        <main className="flex-1 p-6 lg:p-8 max-w-[1600px] w-full mx-auto">
-          {children}
-        </main>
+          <main className="flex-1 p-6 lg:p-8 max-w-[1600px] w-full mx-auto">
+            {children}
+          </main>
 
-        {/* Minimal Cyberpunk Footer */}
-        <footer className="py-4 px-8 border-t border-[#168BFF]/10 text-center text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
-            <span>SpeedToBox v2.0 Enterprise • Painel Cyberpunk Neon (Next.js)</span>
-          </div>
-          <div className="flex items-center gap-4 text-[11px] text-slate-400">
-            <span>
-              Atalhos: <kbd className="px-1.5 py-0.5 rounded bg-slate-800 text-cyan-300 font-mono">Ctrl+N</kbd> Nova Venda
-            </span>
-            <span>
-              <kbd className="px-1.5 py-0.5 rounded bg-slate-800 text-purple-300 font-mono">Ctrl+P</kbd> Novo Produto
-            </span>
-          </div>
-        </footer>
+          {/* Minimal Cyberpunk Footer */}
+          <footer className="py-4 px-8 border-t border-[#168BFF]/10 text-center text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
+              <span>SpeedToBox v2.0 Enterprise &bull; Painel Cyberpunk Neon (Next.js)</span>
+            </div>
+            <div className="flex items-center gap-4 text-[11px] text-slate-400">
+              <span>
+                Atalhos: <kbd className="px-1.5 py-0.5 rounded bg-slate-800 text-cyan-300 font-mono">Ctrl+N</kbd> Nova Venda
+              </span>
+              <span>
+                <kbd className="px-1.5 py-0.5 rounded bg-slate-800 text-purple-300 font-mono">Ctrl+P</kbd> Novo Produto
+              </span>
+            </div>
+          </footer>
+        </div>
       </div>
 
       {/* Global Modals & Toasts */}
