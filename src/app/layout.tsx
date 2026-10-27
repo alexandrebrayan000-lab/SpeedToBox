@@ -1,10 +1,11 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import { ClientLayout } from '../components/ClientLayout';
+import { StoreProvider } from '../context/StoreContext';
+import { Shell } from '../components/layout/Shell';
 
 export const metadata: Metadata = {
-  title: 'SpeedToBox — Sistema de Controle de Estoque & Vendas Cyberpunk Neon',
-  description: 'Controle de estoque, lotes, validades (FIFO), movimentações e vendas integrado.',
+  title: 'SpeedToBox — Sistema Integrado de Estoque, Lotes & Vendas',
+  description: 'Controle de estoque com gestão de lotes, datas de validade (FIFO), movimentações e vendas.',
 };
 
 export default function RootLayout({
@@ -20,15 +21,14 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@500;600;700;800&display=swap"
           rel="stylesheet"
         />
       </head>
-      <body
-        className="bg-[#050816] text-[#F4F7FF] antialiased selection:bg-[#8B35FF] selection:text-white min-h-screen"
-        suppressHydrationWarning
-      >
-        <ClientLayout>{children}</ClientLayout>
+      <body className="bg-[#060919] text-[#f4f7ff] antialiased min-h-screen">
+        <StoreProvider>
+          <Shell>{children}</Shell>
+        </StoreProvider>
       </body>
     </html>
   );
