@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
@@ -13,7 +13,8 @@ import {
   Bell,
   Settings,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Plus
 } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
 
@@ -24,7 +25,7 @@ interface SidebarProps {
 
 export function Sidebar({ isCollapsed, onToggleCollapse }: SidebarProps) {
   const pathname = usePathname();
-  const { alerts } = useStore();
+  const { alerts, setIsNewSaleOpen } = useStore();
   const unreadAlerts = alerts.length;
 
   const menuItems = [
@@ -38,14 +39,14 @@ export function Sidebar({ isCollapsed, onToggleCollapse }: SidebarProps) {
     { href: '/configuracoes', label: 'Configurações', icon: Settings }
   ];
 
-  const widthClass = isCollapsed ? 'w-20' : 'w-64';
-
   return (
     <aside
-      className={`h-screen fixed top-0 left-0 z-40 bg-[#080D20]/95 backdrop-blur-xl border-r border-[#168BFF]/15 flex flex-col justify-between transition-all duration-300 ${widthClass}`}
+      className={`h-screen fixed top-0 left-0 z-40 bg-gradient-to-b from-[#080D20] via-[#050816] to-[#080D20] backdrop-blur-2xl border-r border-[#168BFF]/15 flex flex-col justify-between transition-all duration-300 ${
+        isCollapsed ? 'w-20' : 'w-64'
+      }`}
       style={{ width: isCollapsed ? '80px' : '256px' }}
     >
-      {/* Top Brand Area */}
+      {/* Top Brand Area: Exatamente 72px para alinhar com a TopBar */}
       <div>
         <div
           className={`h-[72px] flex items-center ${
@@ -81,16 +82,16 @@ export function Sidebar({ isCollapsed, onToggleCollapse }: SidebarProps) {
                 <circle cx="24" cy="24" r="3" fill="#00D9FF" filter="drop-shadow(0 0 6px #00D9FF)" />
                 <defs>
                   <linearGradient id="cubeTopGrad" x1="6" y1="4" x2="42" y2="24" gradientUnits="userSpaceOnUse">
-                    <stop stopColor="#00D9FF" stopOpacity="0.8" />
+                    <stop stopColor="#00D9FF" stopOpacity="0.9" />
                     <stop offset="1" stopColor="#168BFF" stopOpacity="0.4" />
                   </linearGradient>
                   <linearGradient id="cubeLeftGrad" x1="6" y1="14" x2="24" y2="44" gradientUnits="userSpaceOnUse">
                     <stop stopColor="#168BFF" stopOpacity="0.9" />
-                    <stop offset="1" stopColor="#050816" stopOpacity="0.7" />
+                    <stop offset="1" stopColor="#050816" stopOpacity="0.8" />
                   </linearGradient>
                   <linearGradient id="cubeRightGrad" x1="24" y1="24" x2="42" y2="44" gradientUnits="userSpaceOnUse">
-                    <stop stopColor="#8B35FF" stopOpacity="0.9" />
-                    <stop offset="1" stopColor="#F32BFF" stopOpacity="0.5" />
+                    <stop stopColor="#8B35FF" stopOpacity="0.95" />
+                    <stop offset="1" stopColor="#F32BFF" stopOpacity="0.45" />
                   </linearGradient>
                 </defs>
               </svg>
@@ -100,13 +101,13 @@ export function Sidebar({ isCollapsed, onToggleCollapse }: SidebarProps) {
               <div className="flex flex-col">
                 <div className="flex items-center gap-1">
                   <span
-                    className="text-xl font-black tracking-wider bg-gradient-to-r from-white via-cyan-200 to-purple-400 bg-clip-text text-transparent"
-                    style={{ fontFamily: 'var(--font-display)' }}
+                    className="text-lg font-black tracking-wider bg-gradient-to-r from-white via-cyan-100 to-purple-300 bg-clip-text text-transparent"
+                    style={{ fontFamily: 'var(--font-display, Inter)' }}
                   >
                     SPEED<span className="text-cyan-400">TOBOX</span>
                   </span>
                 </div>
-                <span className="text-[10px] uppercase tracking-widest text-[#A3B2D1]/70 font-semibold">
+                <span className="text-[9px] uppercase tracking-widest text-[#A3B2D1]/70 font-semibold font-mono">
                   Gestão & Estoque
                 </span>
               </div>
@@ -125,7 +126,7 @@ export function Sidebar({ isCollapsed, onToggleCollapse }: SidebarProps) {
         </div>
 
         {/* Navigation List */}
-        <nav className="p-3 space-y-1.5 overflow-y-auto max-h-[calc(100vh-170px)]">
+        <nav className="p-3 space-y-1 overflow-hidden">
           {menuItems.map(item => {
             const Icon = item.icon;
             const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
@@ -135,22 +136,29 @@ export function Sidebar({ isCollapsed, onToggleCollapse }: SidebarProps) {
                 key={item.href}
                 href={item.href}
                 title={isCollapsed ? item.label : undefined}
-                className={`flex items-center gap-3.5 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all group ${
+                className={`w-full flex items-center ${
+                  isCollapsed ? 'justify-center px-0' : 'justify-between px-3.5'
+                } py-2.5 rounded-xl transition-all duration-200 text-xs font-semibold ${
                   isActive
                     ? 'nav-active'
-                    : 'text-[#A3B2D1] hover:text-white hover:bg-slate-800/40'
-                } ${isCollapsed ? 'justify-center px-2' : ''}`}
+                    : 'text-[#A3B2D1] hover:text-white hover:bg-[#101A35]/50'
+                }`}
               >
-                <Icon
-                  className={`w-4 h-4 flex-shrink-0 transition-transform group-hover:scale-110 ${
-                    isActive ? 'text-cyan-400' : 'text-slate-400 group-hover:text-cyan-300'
-                  }`}
-                />
+                <div className="relative flex items-center gap-3">
+                  <Icon
+                    className={`w-4 h-4 flex-shrink-0 transition-transform ${
+                      isActive ? 'text-cyan-400 scale-105' : 'text-slate-400'
+                    }`}
+                  />
+                  {!isCollapsed && <span className="truncate">{item.label}</span>}
 
-                {!isCollapsed && <span className="flex-1 truncate">{item.label}</span>}
+                  {isCollapsed && item.badge && (
+                    <span className="absolute -top-1 -right-2 w-2 h-2 rounded-full bg-rose-500 shadow-[0_0_6px_#FF3864]"></span>
+                  )}
+                </div>
 
                 {!isCollapsed && item.badge && (
-                  <span className="w-5 h-5 rounded-full bg-rose-500/20 text-rose-400 border border-rose-500/40 text-[10px] font-bold flex items-center justify-center pulse-red">
+                  <span className="px-2 py-0.5 text-[10px] font-bold rounded-full bg-rose-500/20 text-rose-400 border border-rose-500/35 pulse-red">
                     {item.badge}
                   </span>
                 )}
@@ -160,31 +168,34 @@ export function Sidebar({ isCollapsed, onToggleCollapse }: SidebarProps) {
         </nav>
       </div>
 
-      {/* Bottom Footer Area */}
+      {/* Bottom Status & Quick Action */}
       <div className="p-3 border-t border-[#168BFF]/15">
         {isCollapsed ? (
           <button
             onClick={onToggleCollapse}
-            className="w-full flex justify-center text-slate-400 hover:text-cyan-400 p-2 rounded-lg hover:bg-slate-800/40 transition-colors"
+            className="w-full flex items-center justify-center p-2 rounded-xl text-slate-400 hover:text-cyan-400 hover:bg-slate-800/40 transition-colors"
             title="Expandir menu"
           >
             <ChevronRight className="w-4 h-4" />
           </button>
         ) : (
-          <div className="bg-[#0B1228]/80 p-2.5 rounded-xl border border-cyan-500/15 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <div className="cyber-card p-3 flex items-center justify-between border-cyan-500/20">
+            <div className="flex items-center gap-2.5">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+              </span>
               <div className="flex flex-col">
-                <span className="text-[11px] font-bold text-white">Online v2.0</span>
-                <span className="text-[9px] text-[#A3B2D1]/70 font-mono">Next.js App</span>
+                <span className="text-[11px] font-bold text-white">SpeedToBox Online</span>
+                <span className="text-[9px] text-[#A3B2D1]/70 font-mono tracking-tight">Estoque & PDV v2.0</span>
               </div>
             </div>
             <button
-              onClick={onToggleCollapse}
-              className="text-slate-400 hover:text-cyan-400 p-1"
-              title="Recolher"
+              onClick={() => setIsNewSaleOpen(true)}
+              className="w-7 h-7 rounded-lg bg-gradient-to-br from-purple-600 to-cyan-500 flex items-center justify-center text-white hover:scale-105 transition-transform shadow-[0_0_10px_rgba(0,217,255,0.4)]"
+              title="Nova Venda"
             >
-              <ChevronLeft className="w-3.5 h-3.5" />
+              <Plus className="w-3.5 h-3.5" />
             </button>
           </div>
         )}

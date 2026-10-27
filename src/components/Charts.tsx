@@ -49,10 +49,18 @@ export function CyberBarChart({ data, options }: ChartProps) {
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        labels: { color: '#A3B2D1', font: { family: 'Inter', size: 11 } }
+        position: 'top' as const,
+        align: 'end' as const,
+        labels: {
+          color: '#A3B2D1',
+          font: { family: 'Inter', size: 11 },
+          boxWidth: 12,
+          usePointStyle: true,
+          pointStyle: 'circle'
+        }
       },
       tooltip: {
-        backgroundColor: 'rgba(11, 18, 40, 0.95)',
+        backgroundColor: '#0B1228',
         titleColor: '#00D9FF',
         bodyColor: '#FFFFFF',
         borderColor: 'rgba(0, 217, 255, 0.4)',
@@ -64,11 +72,11 @@ export function CyberBarChart({ data, options }: ChartProps) {
     scales: {
       x: {
         grid: { color: 'rgba(22, 139, 255, 0.08)' },
-        ticks: { color: '#64748B', font: { size: 11 } }
+        ticks: { color: '#64748B', font: { size: 10 } }
       },
       y: {
         grid: { color: 'rgba(22, 139, 255, 0.08)' },
-        ticks: { color: '#64748B', font: { size: 11 } }
+        ticks: { color: '#64748B', font: { size: 10 } }
       }
     },
     ...options
@@ -92,10 +100,18 @@ export function CyberLineChart({ data, options }: ChartProps) {
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        labels: { color: '#A3B2D1', font: { family: 'Inter', size: 11 } }
+        position: 'top' as const,
+        align: 'end' as const,
+        labels: {
+          color: '#A3B2D1',
+          font: { family: 'Inter', size: 11 },
+          boxWidth: 12,
+          usePointStyle: true,
+          pointStyle: 'circle'
+        }
       },
       tooltip: {
-        backgroundColor: 'rgba(11, 18, 40, 0.95)',
+        backgroundColor: '#0B1228',
         titleColor: '#8B35FF',
         bodyColor: '#FFFFFF',
         borderColor: 'rgba(139, 53, 255, 0.4)',
@@ -106,11 +122,11 @@ export function CyberLineChart({ data, options }: ChartProps) {
     scales: {
       x: {
         grid: { color: 'rgba(22, 139, 255, 0.08)' },
-        ticks: { color: '#64748B', font: { size: 11 } }
+        ticks: { color: '#64748B', font: { size: 10 } }
       },
       y: {
         grid: { color: 'rgba(22, 139, 255, 0.08)' },
-        ticks: { color: '#64748B', font: { size: 11 } }
+        ticks: { color: '#64748B', font: { size: 10 } }
       }
     },
     ...options
@@ -132,14 +148,13 @@ export function CyberDoughnutChart({ data, options }: ChartProps) {
   const defaultOptions = {
     responsive: true,
     maintainAspectRatio: false,
-    cutout: '70%',
+    cutout: '72%',
     plugins: {
       legend: {
-        position: 'bottom' as const,
-        labels: { color: '#A3B2D1', boxWidth: 12, padding: 12, font: { family: 'Inter', size: 11 } }
+        display: false
       },
       tooltip: {
-        backgroundColor: 'rgba(11, 18, 40, 0.95)',
+        backgroundColor: '#0B1228',
         titleColor: '#00D9FF',
         bodyColor: '#FFFFFF',
         borderColor: 'rgba(0, 217, 255, 0.4)',
