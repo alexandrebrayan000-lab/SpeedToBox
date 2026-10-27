@@ -1,86 +1,36 @@
-# SpeedToBox — Dashboard Cyberpunk Neon Animado
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-Sistema profissional e futurista de controle de estoque, gerenciamento de produtos, lotes (FIFO), movimentações operacionais, vendas analíticas, relatórios e alertas inteligentes.
+## Getting Started
 
----
+First, run the development server:
 
-## 🚀 Como Executar
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
 
-1. **Via `start.bat`:**
-   Dê dois cliques no arquivo `start.bat` na raiz do projeto. Ele iniciará o servidor local e abrirá automaticamente o navegador em `http://localhost:3000`.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-2. **Via Servidor Node:**
-   ```bash
-   node server.js
-   ```
-   Acesse no navegador: `http://localhost:3000`
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-3. **Execução Direta:**
-   Abra o arquivo `index.html` diretamente em qualquer navegador moderno (Chrome, Edge, Firefox, Brave).
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
----
+## Learn More
 
-## 🎨 Identidade Visual Cyberpunk Neon Harmonizada
+To learn more about Next.js, take a look at the following resources:
 
-- **Layout e Alinhamento:** Sidebar perfeitamente alinhada com a TopBar (altura padronizada de 72px e bordas contínuas).
-- **Cards e Superfícies (Glassmorphism):** `#0B1228` com gradiente suave, linha de brilho sutil superior (hairline glow) e elevação interativa.
-- **Fundo Principal:** Preto azulado profundo `#050816` com Canvas 2D animado contínuo (circuitos digitais, nós luminosos, pulsos de luz e gradientes cósmicos orgânicos).
-- **Destaques & Ações:**
-  - Azul Elétrico (`#168BFF`) e Ciano Luminoso (`#00D9FF`): Navegação, identificadores e métricas analíticas.
-  - Roxo Neon (`#8B35FF`) e Rosa Neon (`#F32BFF`): Botões primários, seleções ativas e badges.
-  - Verde Sucesso (`#00E6A0`), Amarelo Atenção (`#FFBF3F`) e Vermelho Perigo (`#FF3864`): Estados e indicadores contextuais com pulsos luminescentes.
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
----
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-## 🌟 Principais Recursos
+## Deploy on Vercel
 
-- **Alternância de Visualização de Gráficos (Dashboard & Vendas):**
-  - **📊 Gráfico de Barras / Colunas:** Comparativo de volumes com preenchimento neon.
-  - **📈 Gráfico de Linha / Tendência Crescente:** Curva suave com área translúcida luminosa para análise de evolução.
-  - **📋 Tabela de Dados:** Visão tabular analítica completa com métricas diárias, balanço do fluxo e status.
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-- **Visão Geral Sem Poluição Visual:**
-  - Remoção de qualquer hero section desnecessária, priorizando dados úteis no primeiro viewport.
-  - 4 Indicadores principais com contadores animados (Total de Produtos, Em Estoque, Estoque Baixo, Vendas no Período).
-  - Fluxo comparativo de Movimentações nos últimos 7 dias com seletor instantâneo de modo (Barras, Linha, Tabela).
-  - Gráfico de Rosca de Distribuição por Categorias.
-  - Movimentações recentes e Alertas críticos de rápida ação.
-
-- **Página de Vendas & Desempenho Analítico Completo:**
-  - Faturamento total, unidades vendidas, total de pedidos, ticket médio e produto destaque.
-  - **Evolução de Faturamento:** Seletor de visualização (Linha Crescente, Barras, Tabela detalhada).
-  - **Top Produtos Mais Vendidos:** Barras horizontais com quantidade, faturamento e % de participação.
-  - **Maiores Saídas do Estoque:** Diferenciação precisa entre Vendas, Perdas por vencimento e Avarias de transporte.
-  - **Gráfico 4 — Ranking de Faturamento por Produto:** Identificação rápida dos itens que mais geram receita líquida.
-  - **Gráfico 5 — Rosca de Categorias:** Participação percentual de faturamento por departamento.
-  - Tabela detalhada de transações comerciais.
-
-- **Gestão de Produtos:**
-  - Catálogo completo com SKU, categoria, saldo disponível, estoque mínimo, preço de custo/venda e status visual.
-  - Modal de cadastro de novo produto com validação e inicialização de lote.
-  - Ações rápidas de entrada (+) e saída (-) diretamente na linha da tabela.
-
-- **Lotes e Validades (FIFO):**
-  - Rastreabilidade de lotes com cálculo dinâmico de dias restantes.
-  - Barras de proximidade coloridas (Normal > 60d, Atenção < 30d, Vencido).
-  - Ações diretas para liquidação ou descarte de produtos vencidos.
-
-- **Movimentações Operacionais:**
-  - Extrato histórico completo com tipo (Entrada, Saída, Perda, Avaria), motivo, usuário responsável e nota fiscal de referência.
-  - Modais dedicados com validação de saldo e integridade de estoque.
-
-- **Central de Relatórios:**
-  - Categorizados por Estoque, Vendas e Validade.
-  - Modal de pré-visualização auditada com impressão e download direto em CSV.
-
-- **Central de Alertas:**
-  - Resumo de criticidade (Alta, Média, Baixa) com recomendações práticas para tomada de decisão.
-
-- **Configurações & Acessibilidade:**
-  - Ajuste de intensidade de efeitos do Canvas neon (Completo, Moderado ou Movimento Reduzido).
-  - Preferências da empresa, perfil de operador e backup em JSON.
-
-- **Atalhos Globais do Teclado:**
-  - `Ctrl + N`: Nova Venda Rápida
-  - `Ctrl + P`: Novo Produto
-  - `Esc`: Fechar Janelas / Modais
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
