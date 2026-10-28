@@ -186,16 +186,6 @@ export function TopBar() {
           )}
         </div>
 
-        {/* User Profile */}
-        <div className="flex items-center gap-2.5 pl-2 border-l border-cyan-500/15">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-cyan-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold shadow-[0_0_8px_rgba(0,217,255,0.3)]">
-            BM
-          </div>
-          <div className="hidden xl:flex flex-col text-left">
-            <span className="text-xs font-bold text-white leading-tight">Brayan &amp; Mylenna</span>
-            <span className="text-[10px] text-slate-400 leading-tight">Gestores do Estabelecimento</span>
-          </div>
-        </div>
       </div>
     </header>
   );
