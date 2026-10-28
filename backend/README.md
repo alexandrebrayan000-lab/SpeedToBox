@@ -7,7 +7,7 @@
 
 ## 🌟 Visão Geral
 
-O backend do **SpeedToBox** centraliza as regras de negócio críticas e a integridade de dados do sistema, atendendo diretamente aos requisitos do **Docs.md**:
+O backend do **SpeedToBox** centraliza as regras de negócio críticas e a integridade de dados do sistema:
 - **RN-01 / RN-03:** Baixa atômica de saldo e registro síncrono de itens e movimentações de saída no PDV.
 - **RN-02:** Bloqueio estrito de vendas sem saldo disponível ou com produtos inativos.
 - **RN-07 / RN-08 / RN-09:** Regras automáticas de status de produto (baixo, esgotado) e lote (vencido, próximo do vencimento via FIFO).
@@ -60,22 +60,3 @@ O servidor iniciará em: [http://localhost:8000](http://localhost:8000)
 Com o servidor rodando, acesse:
 - **Swagger UI (Interativo):** [http://localhost:8000/docs](http://localhost:8000/docs)
 - **ReDoc (Documentação Técnica):** [http://localhost:8000/redoc](http://localhost:8000/redoc)
-
----
-
-## 📡 Principais Endpoints da API
-
-| Método | Endpoint | Descrição |
-|---|---|---|
-| `GET` | `/health` | Checagem de disponibilidade da API |
-| `GET` | `/api/v1/produtos` | Lista catálogo de produtos cadastrados |
-| `POST` | `/api/v1/produtos` | Cadastra novo produto com cálculo de status |
-| `PUT` | `/api/v1/produtos/{id}` | Atualiza atributos de um produto |
-| `DELETE` | `/api/v1/produtos/{id}` | Desativa produto mantendo histórico (RN-10) |
-| `GET` | `/api/v1/lotes` | Lista lotes com ordenação por validade (FIFO) |
-| `POST` | `/api/v1/lotes` | Registra novo lote com verificação de dias até vencimento |
-| `GET` | `/api/v1/movimentacoes` | Extrato de compras, saídas, perdas e avarias |
-| `POST` | `/api/v1/movimentacoes` | Registra movimentação avulsa e atualiza saldo |
-| `GET` | `/api/v1/vendas` | Histórico analítico de vendas e itens |
-| `POST` | `/api/v1/vendas` | Conclui venda com validação de saldo e baixa atômica |
-| `GET` | `/api/v1/dashboard/metrics`| Métricas consolidadas (faturamento, estoque, alertas) |

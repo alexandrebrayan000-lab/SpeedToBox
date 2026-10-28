@@ -2,7 +2,7 @@
   "name": "speedtobox",
   "version": "1.0.0",
   "private": true,
-  "description": "SpeedToBox — Sistema Integrado de Gestão de Estoque & PDV (Projeto Integrador II)",
+  "description": "SpeedToBox — Sistema Integrado de Gestão de Estoque & PDV",
   "scripts": {
     "dev:frontend": "npm run dev --prefix frontend",
     "build:frontend": "npm run build --prefix frontend",

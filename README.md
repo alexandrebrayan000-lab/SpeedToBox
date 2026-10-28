@@ -1,7 +1,6 @@
 # 📦 SpeedToBox — Sistema Integrado de Gestão de Estoque & PDV
 
-> **Projeto Integrador II / Menor Aprendiz**  
-> **Autores:** Mylenna Gonçalves De Paula (Frontend) & Brayan Alexandre Ivo Garrido (Backend)  
+> **Solução Corporativa de Controle de Estoque, Lotes & Vendas**  
 > **Arquitetura:** Monorepo desacoplado com Frontend (Next.js 16) + Backend (FastAPI) + Banco Relacional (Supabase PostgreSQL)
 
 ---
@@ -18,7 +17,7 @@ O sistema foi arquitetado no padrão **Monorepo Profissional**, separando de man
 
 ```
 SpeedToBox/
-├── backend/                  # API REST em Python / FastAPI (Brayan)
+├── backend/                  # API REST em Python / FastAPI
 │   ├── app/
 │   │   ├── routers/          # Endpoints: /produtos, /lotes, /movimentacoes, /vendas, /dashboard
 │   │   ├── schemas/          # Modelos de validação Pydantic v2
@@ -31,7 +30,7 @@ SpeedToBox/
 │   ├── .env.example          # Exemplo de variáveis de ambiente
 │   └── README.md             # Documentação técnica do backend
 │
-├── frontend/                 # Aplicação Web em Next.js 16 + TypeScript (Mylenna)
+├── frontend/                 # Aplicação Web em Next.js 16 + TypeScript
 │   ├── src/
 │   │   ├── app/              # Rotas do App Router (Dashboard, Produtos, PDV, Lotes, etc.)
 │   │   ├── components/       # Componentes visuais em Glassmorphism & Dark Mode
@@ -43,9 +42,6 @@ SpeedToBox/
 │
 ├── supabase/
 │   └── schema.sql            # Script SQL com tabelas, RLS, relacionamentos e dados iniciais
-│
-├── Docs.md                   # Documento de visão e regras de negócio original
-├── Briefing - SpeedToBox.pdf # Material de briefing
 └── package.json              # Scripts de orquestração do monorepo
 ```
 
@@ -95,7 +91,7 @@ pip install -r requirements.txt
 uvicorn app.main:app --reload --port 8000
 ```
 - API ativa em: **[http://localhost:8000](http://localhost:8000)**
-- **Documentação Swagger Interativa:** **[http://localhost:8000/docs](http://localhost:8000/docs)** *(onde qualquer pessoa pode testar os endpoints)*
+- **Documentação Swagger Interativa:** **[http://localhost:8000/docs](http://localhost:8000/docs)**
 
 ---
 
@@ -107,7 +103,7 @@ python -m pytest tests/ -v
 
 ---
 
-## 🛡️ Regras de Negócio Implementadas (Docs.md)
+## 🛡️ Regras de Negócio Implementadas
 
 | ID | Regra | Onde está implementada |
 |---|---|---|
@@ -117,12 +113,3 @@ python -m pytest tests/ -v
 | **RN-08 / RN-09** | Controle de lotes preventivo (FIFO) com badges de alerta | `backend/app/services/lote_service.py` |
 | **RN-10 / RN-11** | Soft Delete: Desativação sem exclusão física para auditoria | `backend/app/routers/produtos.py` |
 | **RF-17 / RNF-12** | Chatbot Assistente com respostas reais de estoque e faturamento | `frontend/src/components/layout/ChatbotWidget.tsx` |
-
----
-
-## 🎓 Guia Rápido para a Apresentação aos Gestores / Banca
-
-1. **Mostrar a Arquitetura Profissional:** Explicar a divisão limpa entre `frontend` e `backend`, mostrando que o backend em Python protege as regras de negócio e validações, enquanto o frontend entrega uma experiência fluida para o usuário.
-2. **Demonstração do Swagger:** Abrir `http://localhost:8000/docs` e mostrar a documentação viva e interativa dos endpoints REST.
-3. **Demonstração da Aplicação:** Abrir `http://localhost:3000`, simular uma venda no PDV e mostrar a atualização instantânea do saldo físico e do faturamento.
-4. **Banco de Dados Relacional:** Mostrar o painel do Supabase com as tabelas `produtos`, `vendas` e `movimentacoes` sincronizadas em tempo real.

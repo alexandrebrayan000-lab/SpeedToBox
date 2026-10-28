@@ -10,7 +10,7 @@ app = FastAPI(
     title="SpeedToBox — API de Gestão de Estoque & PDV",
     description="""
 ## Sistema Integrado de Controle de Estoque, Lotes, Validades e Vendas
-### Projeto Integrador II (Docs.md)
+### Sistema de Gest�o Empresarial
 
 Esta API provê os serviços de negócio, persistência relacional e transações para o SpeedToBox:
 * **Produtos:** Gestão de catálogo, precificação e alertas de estoque mínimo.

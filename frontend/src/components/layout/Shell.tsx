@@ -8,24 +8,27 @@ import { ModalNovaVenda } from '../modals/ModalNovaVenda';
 import { ModalNovaMovimentacao } from '../modals/ModalNovaMovimentacao';
 import { ModalNovoProduto } from '../modals/ModalNovoProduto';
 
-export function Shell({ children }: { children: React.ReactNode }) {
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+interface ShellProps {
+  children: React.ReactNode;
+}
+
+export function Shell({ children }: ShellProps) {
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   return (
-    <div className="min-h-screen bg-[#060919] text-[#f4f7ff] flex relative">
-      {/* Sidebar Fixa */}
+    <div className="min-h-screen bg-[#060919] text-white flex flex-col">
+      {/* Barra de Navegação Lateral */}
       <Sidebar
-        isCollapsed={isSidebarCollapsed}
-        onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+        isCollapsed={isCollapsed}
+        onToggleCollapse={() => setIsCollapsed(!isCollapsed)}
       />
 
-      {/* Área de Conteúdo Principal */}
+      {/* Conteúdo Principal com compensação da largura da barra lateral */}
       <div
-        className="flex-1 flex flex-col min-h-screen transition-all duration-300 min-w-0"
-        style={{
-          marginLeft: isSidebarCollapsed ? '80px' : '256px',
-          width: isSidebarCollapsed ? 'calc(100% - 80px)' : 'calc(100% - 256px)'
-        }}
+        className={`flex-1 flex flex-col transition-all duration-300 min-h-screen ${
+          isCollapsed ? 'ml-20' : 'ml-64'
+        }`}
+        style={{ marginLeft: isCollapsed ? '80px' : '256px' }}
       >
         <TopBar />
 
@@ -37,11 +40,11 @@ export function Shell({ children }: { children: React.ReactNode }) {
         <footer className="py-4 px-8 border-t border-cyan-500/10 text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
-            <span>SpeedToBox • Controle de Estoque, Lotes &amp; Vendas Integrado</span>
+            <span>SpeedToBox • Sistema de Gestão de Estoque &amp; PDV</span>
           </div>
           <div className="flex items-center gap-4 text-[11px] text-slate-400 font-mono">
-            <span>Projeto Integrador II</span>
-            <span>Brayan &amp; Mylenna</span>
+            <span>v1.0</span>
+            <span>© {new Date().getFullYear()} SpeedToBox</span>
           </div>
         </footer>
       </div>

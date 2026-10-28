@@ -64,7 +64,7 @@ interface StoreContextType {
 
 const StoreContext = createContext<StoreContextType | undefined>(undefined);
 
-// Dados Iniciais Fidedignos ao Briefing do Projeto Integrador II
+// Dados Iniciais Fidedignos ao Briefing do Sistema
 const PRODUTOS_INICIAIS: Produto[] = [
   { id: 'p1', codigo: '001', sku: 'ALM-ARR-001', nome: 'Arroz Nobre Tipo 1 5kg', categoria: 'Alimentos', estoque: 145, estoqueMinimo: 30, precoCusto: 22.50, precoVenda: 32.90, unidade: 'UN', status: 'normal', ativo: true },
   { id: 'p2', codigo: '002', sku: 'ALM-FEJ-002', nome: 'Feijão Carioca Especial 1kg', categoria: 'Alimentos', estoque: 18, estoqueMinimo: 25, precoCusto: 6.20, precoVenda: 9.80, unidade: 'UN', status: 'baixo', ativo: true },
@@ -92,14 +92,14 @@ const LOTES_INICIAIS: Lote[] = [
 ];
 
 const MOVIMENTACOES_INICIAIS: Movimentacao[] = [
-  { id: 'm1', dataHora: '2026-10-15 14:32', produtoId: 'p1', tipo: 'entrada', quantidade: 50, custoUnitario: 22.50, motivo: 'Compra de Reposição', loteId: 'l6', usuario: 'Brayan Garrido', referencia: 'NF-e 84920' },
-  { id: 'm2', dataHora: '2026-10-15 11:15', produtoId: 'p7', tipo: 'saida', quantidade: 5, motivo: 'Venda Balcão', loteId: 'l5', usuario: 'Mylenna Paula', referencia: 'Venda #1092' },
-  { id: 'm3', dataHora: '2026-10-14 16:47', produtoId: 'p8', tipo: 'entrada', quantidade: 40, custoUnitario: 4.10, motivo: 'Compra de Reposição', loteId: 'l1', usuario: 'Brayan Garrido', referencia: 'NF-e 84890' },
-  { id: 'm4', dataHora: '2026-10-14 10:20', produtoId: 'p4', tipo: 'saida', quantidade: 8, motivo: 'Venda Balcão', loteId: 'l8', usuario: 'Mylenna Paula', referencia: 'Venda #1085' },
-  { id: 'm5', dataHora: '2026-10-13 17:05', produtoId: 'p9', tipo: 'perda', quantidade: 5, motivo: 'Vencimento no Estoque', loteId: 'l2', usuario: 'Brayan Garrido', referencia: 'Descarte Sanitário' },
-  { id: 'm6', dataHora: '2026-10-13 15:30', produtoId: 'p6', tipo: 'saida', quantidade: 12, motivo: 'Venda Balcão', loteId: null, usuario: 'Mylenna Paula', referencia: 'Venda #1078' },
-  { id: 'm7', dataHora: '2026-10-12 14:10', produtoId: 'p3', tipo: 'avaria', quantidade: 2, motivo: 'Embalagem Rompida no Transporte', loteId: null, usuario: 'Brayan Garrido', referencia: 'Laudo Avaria #02' },
-  { id: 'm8', dataHora: '2026-10-11 09:40', produtoId: 'p5', tipo: 'saida', quantidade: 20, motivo: 'Venda Balcão', loteId: null, usuario: 'Mylenna Paula', referencia: 'Venda #1064' }
+  { id: 'm1', dataHora: '2026-10-15 14:32', produtoId: 'p1', tipo: 'entrada', quantidade: 50, custoUnitario: 22.50, motivo: 'Compra de Reposição', loteId: 'l6', usuario: 'Operador 01', referencia: 'NF-e 84920' },
+  { id: 'm2', dataHora: '2026-10-15 11:15', produtoId: 'p7', tipo: 'saida', quantidade: 5, motivo: 'Venda Balcão', loteId: 'l5', usuario: 'Operador 02', referencia: 'Venda #1092' },
+  { id: 'm3', dataHora: '2026-10-14 16:47', produtoId: 'p8', tipo: 'entrada', quantidade: 40, custoUnitario: 4.10, motivo: 'Compra de Reposição', loteId: 'l1', usuario: 'Operador 01', referencia: 'NF-e 84890' },
+  { id: 'm4', dataHora: '2026-10-14 10:20', produtoId: 'p4', tipo: 'saida', quantidade: 8, motivo: 'Venda Balcão', loteId: 'l8', usuario: 'Operador 02', referencia: 'Venda #1085' },
+  { id: 'm5', dataHora: '2026-10-13 17:05', produtoId: 'p9', tipo: 'perda', quantidade: 5, motivo: 'Vencimento no Estoque', loteId: 'l2', usuario: 'Operador 01', referencia: 'Descarte Sanitário' },
+  { id: 'm6', dataHora: '2026-10-13 15:30', produtoId: 'p6', tipo: 'saida', quantidade: 12, motivo: 'Venda Balcão', loteId: null, usuario: 'Operador 02', referencia: 'Venda #1078' },
+  { id: 'm7', dataHora: '2026-10-12 14:10', produtoId: 'p3', tipo: 'avaria', quantidade: 2, motivo: 'Embalagem Rompida no Transporte', loteId: null, usuario: 'Operador 01', referencia: 'Laudo Avaria #02' },
+  { id: 'm8', dataHora: '2026-10-11 09:40', produtoId: 'p5', tipo: 'saida', quantidade: 20, motivo: 'Venda Balcão', loteId: null, usuario: 'Operador 02', referencia: 'Venda #1064' }
 ];
 
 const VENDAS_INICIAIS: Venda[] = [
@@ -184,7 +184,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     email: 'contato@speedtobox.com.br',
     cidade: 'São Paulo',
     uf: 'SP',
-    gestores: 'Brayan Alexandre & Mylenna Paula',
+    gestores: 'Administra��o Geral',
     janelaAlertaValidadeDias: 15
   });
 
