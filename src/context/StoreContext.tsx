@@ -12,8 +12,10 @@ import {
   DashboardMetrics,
   TipoMovimentacao,
   FormaPagamento,
+  StatusProduto,
   Usuario
 } from '../types';
+import { supabaseService } from '../services/supabaseService';
 
 interface StoreContextType {
   produtos: Produto[];
@@ -146,6 +148,27 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     recarregarUsuario();
+
+    // Sincronização inicial com o banco Supabase
+    async function sincronizarComSupabase() {
+      try {
+        const [prodsData, lotesData, movsData, vendasData] = await Promise.all([
+          supabaseService.getProdutos(),
+          supabaseService.getLotes(),
+          supabaseService.getMovimentacoes(),
+          supabaseService.getVendas()
+        ]);
+
+        if (prodsData && prodsData.length > 0) setProdutos(prodsData);
+        if (lotesData && lotesData.length > 0) setLotes(lotesData);
+        if (movsData && movsData.length > 0) setMovimentacoes(movsData);
+        if (vendasData && vendasData.length > 0) setVendas(vendasData);
+      } catch (err) {
+        console.warn('Banco Supabase em inicialização, mantendo dados padrão:', err);
+      }
+    }
+
+    sincronizarComSupabase();
   }, []);
 
   // Modais de Controle
@@ -264,7 +287,9 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     const id = `p_${Date.now()}`;
     const status: 'normal' | 'baixo' | 'esgotado' =
       novo.estoque <= 0 ? 'esgotado' : novo.estoque <= novo.estoqueMinimo ? 'baixo' : 'normal';
-    setProdutos(prev => [...prev, { ...novo, id, status }]);
+    const novoProduto: Produto = { ...novo, id, status };
+    setProdutos(prev => [...prev, novoProduto]);
+    supabaseService.insertProduto(novoProduto).catch(console.error);
   };
 
   const editarProduto = (id: string, dados: Partial<Produto>) => {
@@ -277,6 +302,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         return atualizado;
       })
     );
+    supabaseService.updateProduto(id, dados).catch(console.error);
   };
 
   const desativarProduto = (id: string) => {
@@ -300,11 +326,12 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       custoUnitario,
       motivo,
       loteId,
-      usuario: 'Brayan Garrido',
+      usuario: usuario?.nome || 'Operador do Sistema',
       referencia: `Reg #${Math.floor(1000 + Math.random() * 9000)}`
     };
 
     setMovimentacoes(prev => [novaMov, ...prev]);
+    supabaseService.insertMovimentacao(novaMov).catch(console.error);
 
     // Atualiza saldo do produto
     setProdutos(prev =>
@@ -312,8 +339,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         if (p.id !== produtoId) return p;
         const delta = tipo === 'entrada' ? quantidade : -quantidade;
         const novoEstoque = Math.max(0, p.estoque + delta);
-        const novoStatus = novoEstoque <= 0 ? 'esgotado' : novoEstoque <= p.estoqueMinimo ? 'baixo' : 'normal';
-        return { ...p, estoque: novoEstoque, status: novoStatus };
+        const novoStatus: StatusProduto = novoEstoque <= 0 ? 'esgotado' : novoEstoque <= p.estoqueMinimo ? 'baixo' : 'normal';
+        const updated: Produto = { ...p, estoque: novoEstoque, status: novoStatus };
+        supabaseService.updateProduto(produtoId, { estoque: novoEstoque, status: novoStatus }).catch(console.error);
+        return updated;
       })
     );
 
@@ -366,6 +395,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     };
 
     setVendas(prev => [novaVenda, ...prev]);
+    supabaseService.insertVenda(novaVenda).catch(console.error);
 
     // 3. Aplica baixa de estoque e registra movimentações de saída
     itens.forEach(item => {
