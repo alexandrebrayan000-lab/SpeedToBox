@@ -15,7 +15,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Bot,
-  Plus
+  UserCheck
 } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 
@@ -26,7 +26,7 @@ interface SidebarProps {
 
 export function Sidebar({ isCollapsed, onToggleCollapse }: SidebarProps) {
   const pathname = usePathname();
-  const { alertas, setIsNovaVendaOpen, setIsChatOpen, usuario, isLoadingUsuario } = useStore();
+  const { alertas, setIsChatOpen, usuario, isLoadingUsuario } = useStore();
   const totalAlertas = alertas.length;
 
   const getIniciais = (nome?: string) => {
@@ -138,7 +138,7 @@ export function Sidebar({ isCollapsed, onToggleCollapse }: SidebarProps) {
         </nav>
       </div>
 
-      {/* Footer Area: Chatbot Button & System Status */}
+      {/* Footer Area: Chatbot Button & Operator Profile */}
       <div className="p-3 border-t border-cyan-500/15 space-y-2">
         {/* Chatbot Trigger */}
         <button
@@ -161,42 +161,39 @@ export function Sidebar({ isCollapsed, onToggleCollapse }: SidebarProps) {
             <ChevronRight className="w-4 h-4" />
           </button>
         ) : (
-          <div className="glass-panel p-2.5 flex items-center justify-between">
+          <Link
+            href="/configuracoes"
+            className="glass-panel p-2.5 flex items-center gap-2.5 hover:border-cyan-400/40 transition-all group block"
+            title="Clique para gerenciar conta e credenciais de acesso"
+          >
             {isLoadingUsuario ? (
-              <div className="flex items-center gap-2 animate-pulse min-w-0">
+              <div className="flex items-center gap-2.5 animate-pulse min-w-0 flex-1">
                 <div className="w-8 h-8 rounded-full bg-slate-700/60 flex-shrink-0" />
-                <div className="flex flex-col gap-1 min-w-0">
+                <div className="flex flex-col gap-1 min-w-0 flex-1">
                   <div className="w-20 h-2.5 bg-slate-700/60 rounded" />
                   <div className="w-14 h-2 bg-slate-800/60 rounded" />
                 </div>
               </div>
             ) : (
-              <div
-                className="flex items-center gap-2 min-w-0"
-                title={usuario?.email ? `${usuario.nome} (${usuario.email})` : usuario?.nome || 'Operador'}
-              >
-                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-cyan-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold shadow-[0_0_8px_rgba(0,217,255,0.3)] flex-shrink-0">
+              <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-cyan-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold shadow-[0_0_8px_rgba(0,217,255,0.3)] flex-shrink-0 group-hover:scale-105 transition-transform">
                   {getIniciais(usuario?.nome)}
                 </div>
-                <div className="flex flex-col min-w-0">
-                  <span className="text-[11px] font-bold text-white truncate">
-                    {usuario?.nome || 'Operador'}
-                  </span>
+                <div className="flex flex-col min-w-0 flex-1">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-[11px] font-bold text-white truncate group-hover:text-cyan-300 transition-colors">
+                      {usuario?.nome || 'Operador'}
+                    </span>
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 flex-shrink-0" title="Online" />
+                  </div>
                   <span className="text-[9px] text-slate-400 font-mono truncate">
                     {usuario?.cargo || 'Conectado'}
                   </span>
                 </div>
+                <UserCheck className="w-3.5 h-3.5 text-slate-500 group-hover:text-cyan-400 flex-shrink-0 transition-colors" />
               </div>
             )}
-
-            <button
-              onClick={() => setIsNovaVendaOpen(true)}
-              className="w-6 h-6 rounded-lg bg-cyan-500/20 text-cyan-400 hover:bg-cyan-500 hover:text-black flex items-center justify-center transition-all flex-shrink-0 ml-1"
-              title="Nova Venda"
-            >
-              <Plus className="w-3.5 h-3.5" />
-            </button>
-          </div>
+          </Link>
         )}
       </div>
     </aside>
