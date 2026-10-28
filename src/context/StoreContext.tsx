@@ -11,7 +11,8 @@ import {
   EstabelecimentoConfig,
   DashboardMetrics,
   TipoMovimentacao,
-  FormaPagamento
+  FormaPagamento,
+  Usuario
 } from '../types';
 
 interface StoreContextType {
@@ -23,6 +24,12 @@ interface StoreContextType {
   chatMessages: ChatMessage[];
   config: EstabelecimentoConfig;
   metrics: DashboardMetrics;
+
+  // Usuário / Autenticação (preparado para API futura)
+  usuario: Usuario | null;
+  isLoadingUsuario: boolean;
+  setUsuario: React.Dispatch<React.SetStateAction<Usuario | null>>;
+  recarregarUsuario: () => Promise<void>;
 
   // Modais globais
   isNovaVendaOpen: boolean;
@@ -106,6 +113,40 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [lotes, setLotes] = useState<Lote[]>(LOTES_INICIAIS);
   const [movimentacoes, setMovimentacoes] = useState<Movimentacao[]>(MOVIMENTACOES_INICIAIS);
   const [vendas, setVendas] = useState<Venda[]>(VENDAS_INICIAIS);
+
+  // Usuário / Autenticação (preparado para consumo da API futura)
+  const [usuario, setUsuario] = useState<Usuario | null>(null);
+  const [isLoadingUsuario, setIsLoadingUsuario] = useState(true);
+
+  const recarregarUsuario = async () => {
+    try {
+      setIsLoadingUsuario(true);
+      // Ponto de integração com a API futura:
+      // const res = await fetch('/api/auth/me');
+      // if (res.ok) {
+      //   const data = await res.json();
+      //   setUsuario(data);
+      //   return;
+      // }
+
+      // Mock inicial preparado enquanto o backend está em desenvolvimento
+      setUsuario({
+        id: 'usr_default',
+        nome: 'Operador do Sistema',
+        cargo: 'Gestão de Estoque',
+        email: 'operador@speedtobox.com.br'
+      });
+    } catch (error) {
+      console.error('Falha ao obter dados do usuário autenticado:', error);
+      setUsuario(null);
+    } finally {
+      setIsLoadingUsuario(false);
+    }
+  };
+
+  useEffect(() => {
+    recarregarUsuario();
+  }, []);
 
   // Modais de Controle
   const [isNovaVendaOpen, setIsNovaVendaOpen] = useState(false);
@@ -411,6 +452,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         chatMessages,
         config,
         metrics,
+        usuario,
+        isLoadingUsuario,
+        setUsuario,
+        recarregarUsuario,
         isNovaVendaOpen,
         setIsNovaVendaOpen,
         isNovaEntradaOpen,

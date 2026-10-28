@@ -26,8 +26,15 @@ interface SidebarProps {
 
 export function Sidebar({ isCollapsed, onToggleCollapse }: SidebarProps) {
   const pathname = usePathname();
-  const { alertas, setIsNovaVendaOpen, setIsChatOpen } = useStore();
+  const { alertas, setIsNovaVendaOpen, setIsChatOpen, usuario, isLoadingUsuario } = useStore();
   const totalAlertas = alertas.length;
+
+  const getIniciais = (nome?: string) => {
+    if (!nome) return 'OP';
+    const partes = nome.trim().split(/\s+/);
+    if (partes.length === 1) return partes[0].slice(0, 2).toUpperCase();
+    return (partes[0][0] + partes[partes.length - 1][0]).toUpperCase();
+  };
 
   const menuItems = [
     { href: '/', label: 'Visão Geral', icon: LayoutDashboard },
@@ -155,19 +162,36 @@ export function Sidebar({ isCollapsed, onToggleCollapse }: SidebarProps) {
           </button>
         ) : (
           <div className="glass-panel p-2.5 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-cyan-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold shadow-[0_0_8px_rgba(0,217,255,0.3)]">
-                BM
+            {isLoadingUsuario ? (
+              <div className="flex items-center gap-2 animate-pulse min-w-0">
+                <div className="w-8 h-8 rounded-full bg-slate-700/60 flex-shrink-0" />
+                <div className="flex flex-col gap-1 min-w-0">
+                  <div className="w-20 h-2.5 bg-slate-700/60 rounded" />
+                  <div className="w-14 h-2 bg-slate-800/60 rounded" />
+                </div>
               </div>
-              <div className="flex flex-col">
-                <span className="text-[11px] font-bold text-white">Brayan &amp; Mylenna</span>
-                <span className="text-[9px] text-slate-400 font-mono">Gestores do Estabelecimento</span>
+            ) : (
+              <div
+                className="flex items-center gap-2 min-w-0"
+                title={usuario?.email ? `${usuario.nome} (${usuario.email})` : usuario?.nome || 'Operador'}
+              >
+                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-cyan-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold shadow-[0_0_8px_rgba(0,217,255,0.3)] flex-shrink-0">
+                  {getIniciais(usuario?.nome)}
+                </div>
+                <div className="flex flex-col min-w-0">
+                  <span className="text-[11px] font-bold text-white truncate">
+                    {usuario?.nome || 'Operador'}
+                  </span>
+                  <span className="text-[9px] text-slate-400 font-mono truncate">
+                    {usuario?.cargo || 'Conectado'}
+                  </span>
+                </div>
               </div>
-            </div>
+            )}
 
             <button
               onClick={() => setIsNovaVendaOpen(true)}
-              className="w-6 h-6 rounded-lg bg-cyan-500/20 text-cyan-400 hover:bg-cyan-500 hover:text-black flex items-center justify-center transition-all"
+              className="w-6 h-6 rounded-lg bg-cyan-500/20 text-cyan-400 hover:bg-cyan-500 hover:text-black flex items-center justify-center transition-all flex-shrink-0 ml-1"
               title="Nova Venda"
             >
               <Plus className="w-3.5 h-3.5" />

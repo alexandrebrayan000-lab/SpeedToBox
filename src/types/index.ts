@@ -83,6 +83,14 @@ export interface ChatMessage {
   sugestoes?: string[];
 }
 
+export interface Usuario {
+  id: string;
+  nome: string;
+  cargo: string;
+  email?: string;
+  avatarUrl?: string;
+}
+
 export interface EstabelecimentoConfig {
   nome: string;
   cnpj: string;
