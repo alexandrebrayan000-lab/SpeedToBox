@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: speedtobox-api
+    runtime: python
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: SUPABASE_URL
+        value: https://foxycskhmabpxcklwmtd.supabase.co
+      - key: SUPABASE_KEY
+        value: sb_publishable_rfllyPwxYTxIo8fWTA40cw_J-rNMGrS
+      - key: PYTHON_VERSION
+        value: 3.11.9
