@@ -4,7 +4,7 @@ import { StoreProvider } from '../context/StoreContext';
 import { Shell } from '../components/layout/Shell';
 
 export const metadata: Metadata = {
-  title: 'SpeedToBox — Sistema Integrado de Estoque, Lotes & Vendas',
+  title: 'SpeedToBox Enterprise — Plataforma de Gestão de Suprimentos & Operações',
   description: 'Controle de estoque com gestão de lotes, datas de validade (FIFO), movimentações e vendas.',
 };
 

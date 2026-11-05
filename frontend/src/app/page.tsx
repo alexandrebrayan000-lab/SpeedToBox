@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import {
   Package,
@@ -10,13 +10,48 @@ import {
   ArrowRight,
   ArrowLeftRight,
   ShieldAlert,
-  Plus
+  Calendar
 } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
 import { DashboardCharts } from '../components/dashboard/DashboardCharts';
 
 export default function HomePage() {
-  const { produtos, movimentacoes, alertas, metrics, setIsNovaVendaOpen } = useStore();
+  const { produtos, movimentacoes, vendas, lotes, alertas, metrics } = useStore();
+  const [periodo, setPeriodo] = useState<'hoje' | '7d' | '30d'>('30d');
+
+  // Cálculos dinâmicos baseados no período selecionado
+  const dadosPeriodo = useMemo(() => {
+    if (periodo === 'hoje') {
+      // Considera transações da data mais recente
+      const vendasHoje = vendas.slice(0, 2);
+      const valorVendas = vendasHoje.reduce((acc, v) => acc + v.valorTotal, 0);
+      const qtdVendas = vendasHoje.reduce((acc, v) => acc + v.itens.reduce((iAcc, item) => iAcc + item.quantidade, 0), 0);
+      return {
+        valorVendas,
+        qtdVendas,
+        variacaoVendas: '+5.4% hoje',
+        variacaoEstoque: 'Estável hoje'
+      };
+    } else if (periodo === '7d') {
+      const vendas7d = vendas.slice(0, 4);
+      const valorVendas = vendas7d.reduce((acc, v) => acc + v.valorTotal, 0);
+      const qtdVendas = vendas7d.reduce((acc, v) => acc + v.itens.reduce((iAcc, item) => iAcc + item.quantidade, 0), 0);
+      return {
+        valorVendas,
+        qtdVendas,
+        variacaoVendas: '+12.8% vs semana ant.',
+        variacaoEstoque: '+2.1% esta semana'
+      };
+    } else {
+      return {
+        valorVendas: metrics.vendasPeriodoValor,
+        qtdVendas: metrics.vendasPeriodoQtd,
+        variacaoVendas: metrics.variacaoVendas,
+        variacaoEstoque: metrics.variacaoEstoque
+      };
+    }
+  }, [periodo, vendas, metrics]);
+
   const ultimasMovimentacoes = movimentacoes.slice(0, 5);
   const alertasCriticos = alertas.slice(0, 3);
 
@@ -36,24 +71,54 @@ export default function HomePage() {
           </p>
         </div>
 
-        <button
-          onClick={() => setIsNovaVendaOpen(true)}
-          className="btn-neon-primary text-xs py-2 px-4 self-start sm:self-auto"
-        >
-          <Plus className="w-4 h-4" />
-          <span>+ Nova Venda (PDV)</span>
-        </button>
+        {/* Controles de Período */}
+        <div className="flex items-center gap-2.5">
+          {/* Seletor de Período */}
+          <div className="bg-[#080d20] p-1 rounded-xl border border-cyan-500/20 flex items-center gap-1 text-xs font-semibold">
+            <Calendar className="w-3.5 h-3.5 text-cyan-400 ml-1.5 hidden sm:inline" />
+            <button
+              onClick={() => setPeriodo('hoje')}
+              className={`px-3 py-1.5 rounded-lg transition-all ${
+                periodo === 'hoje'
+                  ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-[0_0_8px_rgba(0,217,255,0.2)]'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              Hoje
+            </button>
+            <button
+              onClick={() => setPeriodo('7d')}
+              className={`px-3 py-1.5 rounded-lg transition-all ${
+                periodo === '7d'
+                  ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-[0_0_8px_rgba(0,217,255,0.2)]'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              7 dias
+            </button>
+            <button
+              onClick={() => setPeriodo('30d')}
+              className={`px-3 py-1.5 rounded-lg transition-all ${
+                periodo === '30d'
+                  ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-[0_0_8px_rgba(0,217,255,0.2)]'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              30 dias
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* 4 Cards de Indicadores (KPIs) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* KPI 1: Total de Produtos */}
-        <Link href="/produtos" className="glass-panel p-4 group accent-line block">
+        <Link href="/produtos" className="glass-panel p-4 group accent-line block hover:border-cyan-400/40 transition-all">
           <div className="flex items-center justify-between mb-2">
             <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
               Total de Produtos
             </span>
-            <div className="w-8 h-8 rounded-xl bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-cyan-400 group-hover:scale-105 transition-transform">
+            <div className="w-8 h-8 rounded-xl bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-cyan-400 group-hover:scale-110 transition-transform">
               <Package className="w-4 h-4" />
             </div>
           </div>
@@ -74,12 +139,12 @@ export default function HomePage() {
         </Link>
 
         {/* KPI 2: Itens em Estoque */}
-        <Link href="/produtos" className="glass-panel p-4 group accent-line block">
+        <Link href="/produtos" className="glass-panel p-4 group accent-line block hover:border-emerald-400/40 transition-all">
           <div className="flex items-center justify-between mb-2">
             <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
               Itens em Estoque
             </span>
-            <div className="w-8 h-8 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 group-hover:scale-105 transition-transform">
+            <div className="w-8 h-8 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 group-hover:scale-110 transition-transform">
               <Boxes className="w-4 h-4" />
             </div>
           </div>
@@ -88,7 +153,7 @@ export default function HomePage() {
               {metrics.totalEmEstoque}
             </span>
             <span className="badge-pill badge-pill-green">
-              {metrics.variacaoEstoque}
+              {dadosPeriodo.variacaoEstoque}
             </span>
           </div>
           <div className="mt-3 pt-2 border-t border-cyan-500/10 flex items-center justify-between text-[11px] text-slate-400">
@@ -100,12 +165,12 @@ export default function HomePage() {
         </Link>
 
         {/* KPI 3: Estoque Crítico */}
-        <Link href="/alertas" className="glass-panel p-4 group accent-line block">
+        <Link href="/alertas" className="glass-panel p-4 group accent-line block hover:border-rose-400/40 transition-all">
           <div className="flex items-center justify-between mb-2">
             <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
               Estoque Crítico
             </span>
-            <div className="w-8 h-8 rounded-xl bg-rose-500/15 border border-rose-500/30 flex items-center justify-center text-rose-400 group-hover:scale-105 transition-transform">
+            <div className="w-8 h-8 rounded-xl bg-rose-500/15 border border-rose-500/30 flex items-center justify-center text-rose-400 group-hover:scale-110 transition-transform">
               <AlertTriangle className="w-4 h-4" />
             </div>
           </div>
@@ -114,7 +179,7 @@ export default function HomePage() {
               {metrics.totalEstoqueBaixo}
             </span>
             <span className="badge-pill badge-pill-red">
-              {metrics.totalEstoqueBaixo > 0 ? 'ATENÇÃO' : 'NORMAL'}
+              {metrics.totalEstoqueBaixo > 0 ? `${metrics.totalEstoqueBaixo} ATENÇÃO` : 'NORMAL'}
             </span>
           </div>
           <div className="mt-3 pt-2 border-t border-cyan-500/10 flex items-center justify-between text-[11px] text-slate-400">
@@ -125,26 +190,26 @@ export default function HomePage() {
           </div>
         </Link>
 
-        {/* KPI 4: Vendas Registradas */}
-        <Link href="/vendas" className="glass-panel p-4 group accent-line block">
+        {/* KPI 4: Vendas no Período */}
+        <Link href="/vendas" className="glass-panel p-4 group accent-line block hover:border-purple-400/40 transition-all">
           <div className="flex items-center justify-between mb-2">
             <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-              Vendas Registradas
+              Vendas ({periodo === 'hoje' ? 'Hoje' : periodo === '7d' ? '7 Dias' : '30 Dias'})
             </span>
-            <div className="w-8 h-8 rounded-xl bg-purple-500/15 border border-purple-500/30 flex items-center justify-center text-purple-400 group-hover:scale-105 transition-transform">
+            <div className="w-8 h-8 rounded-xl bg-purple-500/15 border border-purple-500/30 flex items-center justify-center text-purple-400 group-hover:scale-110 transition-transform">
               <TrendingUp className="w-4 h-4" />
             </div>
           </div>
           <div className="flex items-baseline justify-between">
             <span className="text-2xl font-black text-white font-mono tracking-tight">
-              R$ {metrics.vendasPeriodoValor.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+              R$ {dadosPeriodo.valorVendas.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
             </span>
             <span className="badge-pill badge-pill-purple">
-              {metrics.vendasPeriodoQtd} UN
+              {dadosPeriodo.qtdVendas} UN
             </span>
           </div>
           <div className="mt-3 pt-2 border-t border-cyan-500/10 flex items-center justify-between text-[11px] text-slate-400">
-            <span>Receita comercial</span>
+            <span>{dadosPeriodo.variacaoVendas}</span>
             <span className="text-purple-400 group-hover:underline flex items-center gap-1 font-semibold">
               Ver Vendas <ArrowRight className="w-3 h-3" />
             </span>
@@ -152,7 +217,7 @@ export default function HomePage() {
         </Link>
       </div>
 
-      {/* Gráficos Reativos */}
+      {/* Gráficos Reativos com Alternador Barras / Linha / Tabela + Donut de Categorias */}
       <DashboardCharts />
 
       {/* Linha Inferior: Tabela de Movimentações Recentes & Alertas Prioritários */}

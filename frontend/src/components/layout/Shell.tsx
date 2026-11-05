@@ -40,7 +40,7 @@ export function Shell({ children }: ShellProps) {
         <footer className="py-4 px-8 border-t border-cyan-500/10 text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
-            <span>SpeedToBox • Sistema de Gestão de Estoque &amp; PDV</span>
+            <span>SpeedToBox Enterprise • Plataforma Integrada de Gestão de Suprimentos &amp; Operações</span>
           </div>
           <div className="flex items-center gap-4 text-[11px] text-slate-400 font-mono">
             <span>v1.0</span>

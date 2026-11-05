@@ -78,7 +78,7 @@ export function Sidebar({ isCollapsed, onToggleCollapse }: SidebarProps) {
                   SPEED<span className="text-cyan-400">TOBOX</span>
                 </span>
                 <span className="text-[10px] uppercase font-mono tracking-widest text-slate-400">
-                  Estoque & Vendas
+                  Enterprise • Supply Chain
                 </span>
               </div>
             )}
