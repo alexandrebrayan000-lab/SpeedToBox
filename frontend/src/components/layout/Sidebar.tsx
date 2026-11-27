@@ -154,13 +154,23 @@ export function Sidebar({ isCollapsed, onToggleCollapse }: SidebarProps) {
         </button>
 
         {isCollapsed ? (
-          <button
-            onClick={onToggleCollapse}
-            className="w-full flex justify-center text-slate-400 hover:text-cyan-400 p-2 rounded-lg hover:bg-slate-800/40"
-            title="Expandir menu"
-          >
-            <ChevronRight className="w-4 h-4" />
-          </button>
+          <div className="space-y-1.5">
+            <button
+              onClick={onToggleCollapse}
+              className="w-full flex justify-center text-slate-400 hover:text-cyan-400 p-2 rounded-lg hover:bg-slate-800/40"
+              title="Expandir menu"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+            <button
+              type="button"
+              onClick={() => void logoutUsuario()}
+              className="w-full flex justify-center text-slate-400 hover:text-rose-400 p-2 rounded-lg hover:bg-rose-500/10 transition-colors"
+              title="Sair da conta"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
+          </div>
         ) : (
           <div className="flex items-center gap-1.5">
             <Link

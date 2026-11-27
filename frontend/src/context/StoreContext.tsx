@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   Produto,
   Lote,
@@ -116,6 +117,7 @@ const VENDAS_INICIAIS: Venda[] = [
 ];
 
 export function StoreProvider({ children }: { children: ReactNode }) {
+  const router = useRouter();
   const [produtos, setProdutos] = useState<Produto[]>(PRODUTOS_INICIAIS);
   const [lotes, setLotes] = useState<Lote[]>(LOTES_INICIAIS);
   const [movimentacoes, setMovimentacoes] = useState<Movimentacao[]>(MOVIMENTACOES_INICIAIS);
@@ -169,9 +171,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   );
 
   const logoutUsuario = React.useCallback(async () => {
-    await supabaseService.logoutUsuario();
     setUsuario(null);
-  }, []);
+    await supabaseService.logoutUsuario();
+    router.replace('/');
+  }, [router]);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -289,6 +292,9 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         if (sessaoOAuth) {
           setUsuario(sessaoOAuth);
         }
+      } else if (event === 'SIGNED_OUT') {
+        setUsuario(null);
+        router.replace('/');
       }
     });
 
