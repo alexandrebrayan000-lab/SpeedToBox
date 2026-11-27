@@ -34,7 +34,6 @@ interface StoreContextType {
   recarregarUsuario: () => Promise<void>;
   loginUsuario: (dados: { username: string; senha: string }) => Promise<{ sucesso: boolean; erro?: string }>;
   cadastrarUsuario: (dados: { nome: string; email: string; username: string; senha: string }) => Promise<{ sucesso: boolean; erro?: string }>;
-  atualizarSenhaUsuario: (senhaAtual: string, novaSenha: string) => Promise<{ sucesso: boolean; erro?: string }>;
   logoutUsuario: () => Promise<void>;
 
   // Modais globais
@@ -163,44 +162,115 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     setUsuario(null);
   }, []);
 
-  const atualizarSenhaUsuario = React.useCallback(
-    async (senhaAtual: string, novaSenha: string) => {
-      return supabaseService.atualizarSenhaUsuario(
-        usuario?.username || '',
-        usuario?.email || '',
-        senhaAtual,
-        novaSenha
-      );
-    },
-    [usuario]
-  );
-
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     void recarregarUsuario();
 
-    // Sincronização inicial com o banco Supabase
-    async function sincronizarComSupabase() {
+    // Sincronização prioritária via API FastAPI (banco Supabase via backend)
+    async function sincronizarComBackend() {
+      const API = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000/api/v1';
       try {
-        const [prodsData, lotesData, movsData, vendasData, estData] = await Promise.all([
-          supabaseService.getProdutos(),
-          supabaseService.getLotes(),
-          supabaseService.getMovimentacoes(),
-          supabaseService.getVendas(),
-          supabaseService.getEstabelecimento()
+        const [prodsRes, lotesRes, movsRes, vendasRes] = await Promise.all([
+          fetch(`${API}/produtos`),
+          fetch(`${API}/lotes`),
+          fetch(`${API}/movimentacoes`),
+          fetch(`${API}/vendas`),
         ]);
 
-        if (prodsData && prodsData.length > 0) setProdutos(prodsData);
-        if (lotesData && lotesData.length > 0) setLotes(lotesData);
-        if (movsData && movsData.length > 0) setMovimentacoes(movsData);
-        if (vendasData && vendasData.length > 0) setVendas(vendasData);
-        if (estData) setConfig(estData);
+        if (prodsRes.ok) {
+          const prodsData = await prodsRes.json() as Array<Record<string, unknown>>;
+          if (Array.isArray(prodsData) && prodsData.length > 0) {
+            setProdutos(prodsData.map(p => ({
+              id: String(p.id),
+              codigo: String(p.codigo || ''),
+              sku: String(p.sku || ''),
+              nome: String(p.nome),
+              categoria: String(p.categoria || ''),
+              estoque: Number(p.estoque),
+              estoqueMinimo: Number(p.estoque_minimo),
+              precoCusto: Number(p.preco_custo),
+              precoVenda: Number(p.preco_venda),
+              unidade: (p.unidade as 'UN' | 'KG' | 'L' | 'CX' | 'PCT') || 'UN',
+              status: (p.status as 'normal' | 'baixo' | 'esgotado') || 'normal',
+              ativo: Boolean(p.ativo ?? true),
+            })));
+          }
+        }
+
+        if (lotesRes.ok) {
+          const lotesData = await lotesRes.json() as Array<Record<string, unknown>>;
+          if (Array.isArray(lotesData) && lotesData.length > 0) {
+            setLotes(lotesData.map(l => ({
+              id: String(l.id),
+              produtoId: String(l.produto_id),
+              codigoLote: String(l.codigo_lote),
+              quantidade: Number(l.quantidade),
+              quantidadeInicial: Number(l.quantidade_inicial),
+              dataEntrada: String(l.data_entrada),
+              dataValidade: String(l.data_validade),
+              status: (l.status as 'normal' | 'proximo_vencimento' | 'vencido' | 'esgotado') || 'normal',
+            })));
+          }
+        }
+
+        if (movsRes.ok) {
+          const movsData = await movsRes.json() as Array<Record<string, unknown>>;
+          if (Array.isArray(movsData) && movsData.length > 0) {
+            setMovimentacoes(movsData.map(m => ({
+              id: String(m.id),
+              dataHora: String(m.data_hora || ''),
+              produtoId: String(m.produto_id),
+              tipo: (m.tipo as 'entrada' | 'saida' | 'perda' | 'avaria') || 'saida',
+              quantidade: Number(m.quantidade),
+              custoUnitario: m.custo_unitario ? Number(m.custo_unitario) : undefined,
+              motivo: String(m.motivo || ''),
+              loteId: m.lote_id ? String(m.lote_id) : null,
+              usuario: String(m.usuario || 'Sistema'),
+              referencia: String(m.referencia || ''),
+            })));
+          }
+        }
+
+        if (vendasRes.ok) {
+          const vendasData = await vendasRes.json() as Array<Record<string, unknown>>;
+          if (Array.isArray(vendasData) && vendasData.length > 0) {
+            setVendas(vendasData.map(v => ({
+              id: String(v.id),
+              codigo: String(v.codigo || ''),
+              dataHora: String(v.data_hora || ''),
+              itens: ((v.itens as Array<Record<string, unknown>>) || []).map(i => ({
+                produtoId: String(i.produto_id),
+                quantidade: Number(i.quantidade),
+                precoUnitario: Number(i.preco_unitario),
+                subtotal: Number(i.subtotal),
+              })),
+              valorTotal: Number(v.valor_total),
+              formaPagamento: (v.forma_pagamento as FormaPagamento) || 'PIX',
+              status: (v.status as 'concluida' | 'cancelada') || 'concluida',
+            })));
+          }
+        }
       } catch (err) {
-        console.warn('Banco Supabase em inicialização, mantendo dados padrão:', err);
+        console.warn('API backend indisponível, tentando Supabase direto:', err);
+        // Fallback Supabase direto
+        try {
+          const [prodsData, lotesData, movsData, vendasData] = await Promise.all([
+            supabaseService.getProdutos(),
+            supabaseService.getLotes(),
+            supabaseService.getMovimentacoes(),
+            supabaseService.getVendas()
+          ]);
+          if (prodsData && prodsData.length > 0) setProdutos(prodsData);
+          if (lotesData && lotesData.length > 0) setLotes(lotesData);
+          if (movsData && movsData.length > 0) setMovimentacoes(movsData);
+          if (vendasData && vendasData.length > 0) setVendas(vendasData);
+        } catch (supErr) {
+          console.warn('Supabase direto também falhou, mantendo dados padrão:', supErr);
+        }
       }
     }
 
-    sincronizarComSupabase();
+    sincronizarComBackend();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -211,7 +281,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [isChatOpen, setIsChatOpen] = useState(false);
 
   // Configuração
-  const [config, setConfig] = useState<EstabelecimentoConfig>({
+  const [config] = useState<EstabelecimentoConfig>({
     nome: 'SpeedToBox — Minimercado & Conveniência',
     cnpj: '45.892.103/0001-92',
     email: 'contato@speedtobox.com.br',
@@ -317,12 +387,30 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   // Funções de Negócio
   const adicionarProduto = (novo: Omit<Produto, 'id' | 'status'>) => {
+    const API = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000/api/v1';
     const id = `p_${Date.now()}`;
     const status: 'normal' | 'baixo' | 'esgotado' =
       novo.estoque <= 0 ? 'esgotado' : novo.estoque <= novo.estoqueMinimo ? 'baixo' : 'normal';
     const novoProduto: Produto = { ...novo, id, status };
     setProdutos(prev => [...prev, novoProduto]);
-    supabaseService.insertProduto(novoProduto).catch(console.error);
+    // Persiste via backend FastAPI (que escreve no Supabase)
+    fetch(`${API}/produtos`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        id: novoProduto.id,
+        codigo: novoProduto.codigo,
+        sku: novoProduto.sku,
+        nome: novoProduto.nome,
+        categoria: novoProduto.categoria,
+        estoque: novoProduto.estoque,
+        estoque_minimo: novoProduto.estoqueMinimo,
+        preco_custo: novoProduto.precoCusto,
+        preco_venda: novoProduto.precoVenda,
+        unidade: novoProduto.unidade,
+        ativo: novoProduto.ativo,
+      }),
+    }).catch(() => supabaseService.insertProduto(novoProduto).catch(console.error));
   };
 
   const editarProduto = (id: string, dados: Partial<Produto>) => {
@@ -385,10 +473,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         prev.map(l => {
           if (l.id !== loteId) return l;
           const delta = tipo === 'entrada' ? quantidade : -quantidade;
-          const novaQtd = Math.max(0, l.quantidade + delta);
-          const novoStatus = novaQtd <= 0 ? 'esgotado' : l.status;
-          supabaseService.updateLote(loteId, { quantidade: novaQtd, status: novoStatus }).catch(console.error);
-          return { ...l, quantidade: novaQtd, status: novoStatus };
+          return { ...l, quantidade: Math.max(0, l.quantidade + delta) };
         })
       );
     }
@@ -399,7 +484,9 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     itens: { produtoId: string; quantidade: number; precoUnitario: number }[],
     formaPagamento: FormaPagamento
   ): { sucesso: boolean; mensagem: string } => {
-    // 1. Verifica saldo disponível para todos os itens
+    const API = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000/api/v1';
+
+    // 1. Verifica saldo disponível para todos os itens (validação local imediata)
     for (const item of itens) {
       const prod = produtos.find(p => p.id === item.produtoId);
       if (!prod) return { sucesso: false, mensagem: `Produto não localizado.` };
@@ -430,10 +517,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       status: 'concluida'
     };
 
+    // 3. Atualiza estado local imediatamente (otimistic update)
     setVendas(prev => [novaVenda, ...prev]);
-    supabaseService.insertVenda(novaVenda).catch(console.error);
 
-    // 3. Aplica baixa de estoque e registra movimentações de saída
+    // 4. Aplica baixa de estoque local
     itens.forEach(item => {
       registrarMovimentacao(
         item.produtoId,
@@ -441,6 +528,28 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         item.quantidade,
         `Venda PDV ${novaVenda.codigo}`
       );
+    });
+
+    // 5. Persiste venda via backend FastAPI (atômico no banco)
+    fetch(`${API}/vendas`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        itens: itensCompletos.map(i => ({
+          produto_id: i.produtoId,
+          quantidade: i.quantidade,
+          preco_unitario: i.precoUnitario,
+        })),
+        forma_pagamento: formaPagamento,
+      }),
+    }).then(async res => {
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({})) as Record<string, unknown>;
+        console.warn('Backend rejeitou a venda:', err);
+      }
+    }).catch(() => {
+      // Fallback: persiste direto no Supabase
+      supabaseService.insertVenda(novaVenda).catch(console.error);
     });
 
     return { sucesso: true, mensagem: `Venda ${novaVenda.codigo} registrada com sucesso!` };
@@ -524,7 +633,6 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         recarregarUsuario,
         loginUsuario,
         cadastrarUsuario,
-        atualizarSenhaUsuario,
         logoutUsuario,
         isNovaVendaOpen,
         setIsNovaVendaOpen,

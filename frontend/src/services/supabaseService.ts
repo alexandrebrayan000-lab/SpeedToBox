@@ -1,5 +1,5 @@
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
-import { Produto, Lote, Movimentacao, Venda, Usuario, EstabelecimentoConfig } from '../types';
+import { Produto, Lote, Movimentacao, Venda, Usuario } from '../types';
 
 const ESTABELECIMENTO_PADRAO_ID = 'a0000000-0000-0000-0000-000000000001';
 const STORAGE_SESSION_KEY = 'speedtobox_user_session';
@@ -97,19 +97,11 @@ export const supabaseService = {
   async updateProduto(id: string, updates: Partial<Produto>): Promise<boolean> {
     if (!isSupabaseConfigured || !supabase) return false;
     const payload: Record<string, unknown> = {};
-    if (updates.codigo !== undefined) payload.codigo = updates.codigo;
-    if (updates.sku !== undefined) payload.sku = updates.sku;
-    if (updates.nome !== undefined) payload.nome = updates.nome;
-    if (updates.categoria !== undefined) payload.categoria = updates.categoria;
     if (updates.estoque !== undefined) payload.estoque = updates.estoque;
-    if (updates.estoqueMinimo !== undefined) payload.estoque_minimo = updates.estoqueMinimo;
-    if (updates.precoCusto !== undefined) payload.preco_custo = updates.precoCusto;
-    if (updates.precoVenda !== undefined) payload.preco_venda = updates.precoVenda;
-    if (updates.unidade !== undefined) payload.unidade = updates.unidade;
     if (updates.status !== undefined) payload.status = updates.status;
     if (updates.ativo !== undefined) payload.ativo = updates.ativo;
-
-    if (Object.keys(payload).length === 0) return true;
+    if (updates.nome !== undefined) payload.nome = updates.nome;
+    if (updates.precoVenda !== undefined) payload.preco_venda = updates.precoVenda;
 
     const { error } = await supabase.from('produtos').update(payload).eq('id', id);
     if (error) console.error('Erro ao atualizar produto no Supabase:', error);
@@ -150,39 +142,6 @@ export const supabaseService = {
     }]);
     if (error) console.error('Erro ao inserir lote no Supabase:', error);
     return !error;
-  },
-
-  async updateLote(id: string, updates: Partial<Lote>): Promise<boolean> {
-    if (!isSupabaseConfigured || !supabase) return false;
-    const payload: Record<string, unknown> = {};
-    if (updates.quantidade !== undefined) payload.quantidade = updates.quantidade;
-    if (updates.status !== undefined) payload.status = updates.status;
-    if (Object.keys(payload).length === 0) return true;
-    const { error } = await supabase.from('lotes').update(payload).eq('id', id);
-    if (error) console.error('Erro ao atualizar lote no Supabase:', error);
-    return !error;
-  },
-
-  async getEstabelecimento(): Promise<EstabelecimentoConfig | null> {
-    if (!isSupabaseConfigured || !supabase) return null;
-    const { data, error } = await supabase
-      .from('estabelecimentos')
-      .select('*')
-      .limit(1)
-      .maybeSingle();
-    if (error || !data) {
-      if (error) console.warn('Supabase getEstabelecimento:', error.message);
-      return null;
-    }
-    return {
-      nome: String(data.nome),
-      cnpj: String(data.cnpj),
-      email: String(data.email),
-      cidade: String(data.cidade),
-      uf: String(data.uf),
-      gestores: String(data.gestores || 'Gestão Integrada'),
-      janelaAlertaValidadeDias: Number(data.janela_alerta_validade_dias ?? 15)
-    };
   },
 
   // 3. MOVIMENTAÇÕES
@@ -515,58 +474,6 @@ export const supabaseService = {
     }
 
     return { sucesso: false, erro: 'Nome de usuário ou senha inválidos.' };
-  },
-
-  async atualizarSenhaUsuario(
-    username: string,
-    email: string,
-    senhaAtual: string,
-    novaSenha: string
-  ): Promise<{ sucesso: boolean; erro?: string }> {
-    if (!senhaAtual || novaSenha.length < 6) {
-      return { sucesso: false, erro: 'A nova senha deve possuir no mínimo 6 caracteres.' };
-    }
-
-    const senhaAtualHash = await hashSenha(senhaAtual);
-    const novaSenhaHash = await hashSenha(novaSenha);
-
-    if (isSupabaseConfigured && supabase) {
-      if (email) {
-        const { error: signInErr } = await supabase.auth.signInWithPassword({
-          email,
-          password: senhaAtual
-        });
-        if (!signInErr) {
-          const { error: updateErr } = await supabase.auth.updateUser({ password: novaSenha });
-          if (updateErr) {
-            return { sucesso: false, erro: updateErr.message };
-          }
-        }
-      }
-
-      if (email) {
-        await supabase
-          .from('usuarios')
-          .update({ senha_hash: novaSenhaHash })
-          .eq('email', email);
-      }
-    }
-
-    const cached = getCachedUsers();
-    const idx = cached.findIndex(
-      u => (username && u.username === username) || (email && u.email === email)
-    );
-    if (idx >= 0) {
-      if (cached[idx].senhaHash !== senhaAtualHash && !(isSupabaseConfigured && supabase)) {
-        return { sucesso: false, erro: 'Senha atual incorreta.' };
-      }
-      cached[idx] = { ...cached[idx], senhaHash: novaSenhaHash };
-      if (typeof window !== 'undefined') {
-        localStorage.setItem(STORAGE_USERS_KEY, JSON.stringify(cached));
-      }
-    }
-
-    return { sucesso: true };
   },
 
   async logoutUsuario(): Promise<void> {
