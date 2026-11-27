@@ -97,11 +97,17 @@ export const supabaseService = {
   async updateProduto(id: string, updates: Partial<Produto>): Promise<boolean> {
     if (!isSupabaseConfigured || !supabase) return false;
     const payload: Record<string, unknown> = {};
+    if (updates.codigo !== undefined) payload.codigo = updates.codigo;
+    if (updates.sku !== undefined) payload.sku = updates.sku;
+    if (updates.nome !== undefined) payload.nome = updates.nome;
+    if (updates.categoria !== undefined) payload.categoria = updates.categoria;
     if (updates.estoque !== undefined) payload.estoque = updates.estoque;
+    if (updates.estoqueMinimo !== undefined) payload.estoque_minimo = updates.estoqueMinimo;
+    if (updates.precoCusto !== undefined) payload.preco_custo = updates.precoCusto;
+    if (updates.precoVenda !== undefined) payload.preco_venda = updates.precoVenda;
+    if (updates.unidade !== undefined) payload.unidade = updates.unidade;
     if (updates.status !== undefined) payload.status = updates.status;
     if (updates.ativo !== undefined) payload.ativo = updates.ativo;
-    if (updates.nome !== undefined) payload.nome = updates.nome;
-    if (updates.precoVenda !== undefined) payload.preco_venda = updates.precoVenda;
 
     const { error } = await supabase.from('produtos').update(payload).eq('id', id);
     if (error) console.error('Erro ao atualizar produto no Supabase:', error);
@@ -141,6 +147,17 @@ export const supabaseService = {
       status: lote.status
     }]);
     if (error) console.error('Erro ao inserir lote no Supabase:', error);
+    return !error;
+  },
+
+  async updateLote(id: string, updates: Partial<Lote>): Promise<boolean> {
+    if (!isSupabaseConfigured || !supabase) return false;
+    const payload: Record<string, unknown> = {};
+    if (updates.quantidade !== undefined) payload.quantidade = updates.quantidade;
+    if (updates.status !== undefined) payload.status = updates.status;
+
+    const { error } = await supabase.from('lotes').update(payload).eq('id', id);
+    if (error) console.error('Erro ao atualizar lote no Supabase:', error);
     return !error;
   },
 

@@ -444,6 +444,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   };
 
   const editarProduto = (id: string, dados: Partial<Produto>) => {
+    const API = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000/api/v1';
     setProdutos(prev =>
       prev.map(p => {
         if (p.id !== id) return p;
@@ -453,7 +454,20 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         return atualizado;
       })
     );
-    supabaseService.updateProduto(id, dados).catch(console.error);
+    const apiPayload: Record<string, unknown> = {};
+    if (dados.nome !== undefined) apiPayload.nome = dados.nome;
+    if (dados.categoria !== undefined) apiPayload.categoria = dados.categoria;
+    if (dados.estoque !== undefined) apiPayload.estoque = dados.estoque;
+    if (dados.estoqueMinimo !== undefined) apiPayload.estoque_minimo = dados.estoqueMinimo;
+    if (dados.precoCusto !== undefined) apiPayload.preco_custo = dados.precoCusto;
+    if (dados.precoVenda !== undefined) apiPayload.preco_venda = dados.precoVenda;
+    if (dados.ativo !== undefined) apiPayload.ativo = dados.ativo;
+
+    fetch(`${API}/produtos/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(apiPayload),
+    }).catch(() => supabaseService.updateProduto(id, dados).catch(console.error));
   };
 
   const desativarProduto = (id: string) => {
@@ -503,7 +517,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         prev.map(l => {
           if (l.id !== loteId) return l;
           const delta = tipo === 'entrada' ? quantidade : -quantidade;
-          return { ...l, quantidade: Math.max(0, l.quantidade + delta) };
+          const novaQtd = Math.max(0, l.quantidade + delta);
+          const novoStatus = novaQtd <= 0 ? 'esgotado' : l.status;
+          supabaseService.updateLote(loteId, { quantidade: novaQtd, status: novoStatus }).catch(console.error);
+          return { ...l, quantidade: novaQtd, status: novoStatus };
         })
       );
     }
