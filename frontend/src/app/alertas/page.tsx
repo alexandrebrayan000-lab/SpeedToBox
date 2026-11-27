@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useStore } from '../../context/StoreContext';
 
 export function AlertasPage() {
-  const { alertas, produtos, lotes } = useStore();
+  const { alertas } = useStore();
 
   const alertasEstoque = alertas.filter(a => a.tipo === 'estoque_baixo' || a.tipo === 'estoque_zerado');
   const alertasValidade = alertas.filter(a => a.tipo === 'lote_proximo_vencimento' || a.tipo === 'lote_vencido');

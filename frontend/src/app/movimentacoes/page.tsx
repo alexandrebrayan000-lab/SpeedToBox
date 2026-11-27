@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import { ArrowLeftRight, Plus, Filter } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
-import { TipoMovimentacao } from '../../types';
 
 export function MovimentacoesPage() {
   const { movimentacoes, produtos, setIsNovaEntradaOpen } = useStore();

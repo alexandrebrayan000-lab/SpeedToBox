@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Boxes, Calendar, AlertTriangle } from 'lucide-react';
+import { Boxes } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 
 export function LotesPage() {

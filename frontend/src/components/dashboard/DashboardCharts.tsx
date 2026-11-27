@@ -32,9 +32,8 @@ export function DashboardCharts() {
   const [mounted, setMounted] = useState(false);
   const [chartMode, setChartMode] = useState<'bar' | 'line' | 'table'>('bar');
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useEffect(() => { setMounted(true); }, []);
 
   if (!mounted) {
     return <div className="h-64 glass-panel animate-pulse flex items-center justify-center text-xs text-slate-500">Carregando métricas visuais...</div>;

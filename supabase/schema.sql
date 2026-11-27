@@ -24,11 +24,17 @@ CREATE TABLE IF NOT EXISTS usuarios (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     estabelecimento_id UUID REFERENCES estabelecimentos(id) ON DELETE CASCADE,
     nome VARCHAR(255) NOT NULL,
-    cargo VARCHAR(100) NOT NULL,
+    username VARCHAR(100) UNIQUE,
+    cargo VARCHAR(100) NOT NULL DEFAULT 'Gestor de Estoque',
     email VARCHAR(255) UNIQUE NOT NULL,
+    senha_hash TEXT,
     avatar_url TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
+
+-- Garante colunas de autenticação caso a tabela já exista no Supabase
+ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS username VARCHAR(100) UNIQUE;
+ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS senha_hash TEXT;
 
 -- 4. TABELA: PRODUTOS
 CREATE TABLE IF NOT EXISTS produtos (
@@ -153,11 +159,12 @@ VALUES (
 ) ON CONFLICT (id) DO NOTHING;
 
 -- Inserir Usuário Inicial
-INSERT INTO usuarios (id, estabelecimento_id, nome, cargo, email)
+INSERT INTO usuarios (id, estabelecimento_id, nome, username, cargo, email)
 VALUES (
     'b0000000-0000-0000-0000-000000000001',
     'a0000000-0000-0000-0000-000000000001',
     'Operador do Sistema',
+    'operador',
     'Gestor de Estoque',
     'operador@speedtobox.com.br'
 ) ON CONFLICT (id) DO NOTHING;
