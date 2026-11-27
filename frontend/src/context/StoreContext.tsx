@@ -27,11 +27,15 @@ interface StoreContextType {
   config: EstabelecimentoConfig;
   metrics: DashboardMetrics;
 
-  // Usuário / Autenticação (preparado para API futura)
+  // Usuário / Autenticação (Supabase)
   usuario: Usuario | null;
   isLoadingUsuario: boolean;
   setUsuario: React.Dispatch<React.SetStateAction<Usuario | null>>;
   recarregarUsuario: () => Promise<void>;
+  loginUsuario: (dados: { username: string; senha: string }) => Promise<{ sucesso: boolean; erro?: string }>;
+  cadastrarUsuario: (dados: { nome: string; email: string; username: string; senha: string }) => Promise<{ sucesso: boolean; erro?: string }>;
+  atualizarSenhaUsuario: (senhaAtual: string, novaSenha: string) => Promise<{ sucesso: boolean; erro?: string }>;
+  logoutUsuario: () => Promise<void>;
 
   // Modais globais
   isNovaVendaOpen: boolean;
@@ -120,55 +124,84 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [usuario, setUsuario] = useState<Usuario | null>(null);
   const [isLoadingUsuario, setIsLoadingUsuario] = useState(true);
 
-  const recarregarUsuario = async () => {
+  const recarregarUsuario = React.useCallback(async () => {
     try {
-      setIsLoadingUsuario(true);
-      // Ponto de integração com a API futura:
-      // const res = await fetch('/api/auth/me');
-      // if (res.ok) {
-      //   const data = await res.json();
-      //   setUsuario(data);
-      //   return;
-      // }
-
-      // Mock inicial preparado enquanto o backend está em desenvolvimento
-      setUsuario({
-        id: 'usr_default',
-        nome: 'Operador do Sistema',
-        cargo: 'Gestão de Estoque',
-        email: 'operador@speedtobox.com.br'
-      });
+      const sessao = supabaseService.getUsuarioSessao();
+      setUsuario(sessao);
     } catch (error) {
       console.error('Falha ao obter dados do usuário autenticado:', error);
       setUsuario(null);
     } finally {
       setIsLoadingUsuario(false);
     }
-  };
+  }, []);
+
+  const loginUsuario = React.useCallback(
+    async (dados: { username: string; senha: string }) => {
+      const res = await supabaseService.loginUsuario(dados);
+      if (res.sucesso && res.usuario) {
+        setUsuario(res.usuario);
+      }
+      return { sucesso: res.sucesso, erro: res.erro };
+    },
+    []
+  );
+
+  const cadastrarUsuario = React.useCallback(
+    async (dados: { nome: string; email: string; username: string; senha: string }) => {
+      const res = await supabaseService.cadastrarUsuario(dados);
+      if (res.sucesso && res.usuario) {
+        setUsuario(res.usuario);
+      }
+      return { sucesso: res.sucesso, erro: res.erro };
+    },
+    []
+  );
+
+  const logoutUsuario = React.useCallback(async () => {
+    await supabaseService.logoutUsuario();
+    setUsuario(null);
+  }, []);
+
+  const atualizarSenhaUsuario = React.useCallback(
+    async (senhaAtual: string, novaSenha: string) => {
+      return supabaseService.atualizarSenhaUsuario(
+        usuario?.username || '',
+        usuario?.email || '',
+        senhaAtual,
+        novaSenha
+      );
+    },
+    [usuario]
+  );
 
   useEffect(() => {
-    recarregarUsuario();
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void recarregarUsuario();
 
     // Sincronização inicial com o banco Supabase
     async function sincronizarComSupabase() {
       try {
-        const [prodsData, lotesData, movsData, vendasData] = await Promise.all([
+        const [prodsData, lotesData, movsData, vendasData, estData] = await Promise.all([
           supabaseService.getProdutos(),
           supabaseService.getLotes(),
           supabaseService.getMovimentacoes(),
-          supabaseService.getVendas()
+          supabaseService.getVendas(),
+          supabaseService.getEstabelecimento()
         ]);
 
         if (prodsData && prodsData.length > 0) setProdutos(prodsData);
         if (lotesData && lotesData.length > 0) setLotes(lotesData);
         if (movsData && movsData.length > 0) setMovimentacoes(movsData);
         if (vendasData && vendasData.length > 0) setVendas(vendasData);
+        if (estData) setConfig(estData);
       } catch (err) {
         console.warn('Banco Supabase em inicialização, mantendo dados padrão:', err);
       }
     }
 
     sincronizarComSupabase();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Modais de Controle
@@ -178,7 +211,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [isChatOpen, setIsChatOpen] = useState(false);
 
   // Configuração
-  const [config] = useState<EstabelecimentoConfig>({
+  const [config, setConfig] = useState<EstabelecimentoConfig>({
     nome: 'SpeedToBox — Minimercado & Conveniência',
     cnpj: '45.892.103/0001-92',
     email: 'contato@speedtobox.com.br',
@@ -352,7 +385,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         prev.map(l => {
           if (l.id !== loteId) return l;
           const delta = tipo === 'entrada' ? quantidade : -quantidade;
-          return { ...l, quantidade: Math.max(0, l.quantidade + delta) };
+          const novaQtd = Math.max(0, l.quantidade + delta);
+          const novoStatus = novaQtd <= 0 ? 'esgotado' : l.status;
+          supabaseService.updateLote(loteId, { quantidade: novaQtd, status: novoStatus }).catch(console.error);
+          return { ...l, quantidade: novaQtd, status: novoStatus };
         })
       );
     }
@@ -486,6 +522,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         isLoadingUsuario,
         setUsuario,
         recarregarUsuario,
+        loginUsuario,
+        cadastrarUsuario,
+        atualizarSenhaUsuario,
+        logoutUsuario,
         isNovaVendaOpen,
         setIsNovaVendaOpen,
         isNovaEntradaOpen,

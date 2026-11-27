@@ -86,6 +86,7 @@ export interface ChatMessage {
 export interface Usuario {
   id: string;
   nome: string;
+  username?: string;
   cargo: string;
   email?: string;
   avatarUrl?: string;

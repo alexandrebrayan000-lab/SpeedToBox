@@ -5,7 +5,7 @@ import { Settings, Store, Lock, KeyRound, ShieldCheck, CheckCircle2, UserCheck, 
 import { useStore } from '../../context/StoreContext';
 
 export function ConfiguracoesPage() {
-  const { config, usuario } = useStore();
+  const { config, usuario, atualizarSenhaUsuario } = useStore();
 
   const [emailLogin, setEmailLogin] = useState(usuario?.email || 'operador@speedtobox.com.br');
   const [senhaAtual, setSenhaAtual] = useState('');
@@ -14,7 +14,7 @@ export function ConfiguracoesPage() {
   const [msgSucesso, setMsgSucesso] = useState<string | null>(null);
   const [msgErro, setMsgErro] = useState<string | null>(null);
 
-  const handleSalvarSenha = (e: React.FormEvent) => {
+  const handleSalvarSenha = async (e: React.FormEvent) => {
     e.preventDefault();
     setMsgErro(null);
     setMsgSucesso(null);
@@ -34,7 +34,12 @@ export function ConfiguracoesPage() {
       return;
     }
 
-    // Sucesso simulado / preparado para Supabase Auth updatePassword
+    const res = await atualizarSenhaUsuario(senhaAtual, novaSenha);
+    if (!res.sucesso) {
+      setMsgErro(res.erro || 'Não foi possível atualizar a senha.');
+      return;
+    }
+
     setMsgSucesso('Credenciais e senha de acesso atualizadas com sucesso!');
     setSenhaAtual('');
     setNovaSenha('');
