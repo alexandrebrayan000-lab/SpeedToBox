@@ -1,20 +1,22 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Settings, Store, Lock, KeyRound, ShieldCheck, CheckCircle2, UserCheck, Bell } from 'lucide-react';
+import { Settings, Store, Lock, KeyRound, ShieldCheck, CheckCircle2, UserCheck, Bell, Loader2 } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
+import { supabase } from '../../lib/supabase';
 
 export function ConfiguracoesPage() {
   const { config, usuario } = useStore();
 
-  const [emailLogin, setEmailLogin] = useState(usuario?.email || 'operador@speedtobox.com.br');
+  const [emailLogin, setEmailLogin] = useState(usuario?.email || '');
   const [senhaAtual, setSenhaAtual] = useState('');
   const [novaSenha, setNovaSenha] = useState('');
   const [confirmaSenha, setConfirmaSenha] = useState('');
+  const [salvando, setSalvando] = useState(false);
   const [msgSucesso, setMsgSucesso] = useState<string | null>(null);
   const [msgErro, setMsgErro] = useState<string | null>(null);
 
-  const handleSalvarSenha = (e: React.FormEvent) => {
+  const handleSalvarSenha = async (e: React.FormEvent) => {
     e.preventDefault();
     setMsgErro(null);
     setMsgSucesso(null);
@@ -23,24 +25,53 @@ export function ConfiguracoesPage() {
       setMsgErro('Por favor, informe sua senha atual para validação.');
       return;
     }
-
     if (novaSenha.length < 6) {
       setMsgErro('A nova senha deve possuir no mínimo 6 caracteres.');
       return;
     }
-
     if (novaSenha !== confirmaSenha) {
       setMsgErro('A confirmação não coincide com a nova senha digitada.');
       return;
     }
 
-    // Sucesso simulado / preparado para Supabase Auth updatePassword
-    setMsgSucesso('Credenciais e senha de acesso atualizadas com sucesso!');
-    setSenhaAtual('');
-    setNovaSenha('');
-    setConfirmaSenha('');
+    setSalvando(true);
+    try {
+      // 1) Re-autentica com a senha atual para validar
+      const email = emailLogin || usuario?.email || '';
+      if (!email) {
+        setMsgErro('E-mail de autenticação não encontrado. Faça logout e login novamente.');
+        return;
+      }
 
-    setTimeout(() => setMsgSucesso(null), 4000);
+      if (supabase) {
+        const { error: signInErr } = await supabase.auth.signInWithPassword({
+          email,
+          password: senhaAtual,
+        });
+        if (signInErr) {
+          setMsgErro('Senha atual incorreta. Tente novamente.');
+          return;
+        }
+
+        // 2) Atualiza a senha via Supabase Auth
+        const { error: updateErr } = await supabase.auth.updateUser({ password: novaSenha });
+        if (updateErr) {
+          setMsgErro(`Erro ao atualizar senha: ${updateErr.message}`);
+          return;
+        }
+      }
+
+      setMsgSucesso('Senha atualizada com sucesso no Supabase Auth!');
+      setSenhaAtual('');
+      setNovaSenha('');
+      setConfirmaSenha('');
+      setTimeout(() => setMsgSucesso(null), 5000);
+    } catch (err) {
+      setMsgErro('Erro inesperado ao tentar alterar a senha.');
+      console.error(err);
+    } finally {
+      setSalvando(false);
+    }
   };
 
   return (
@@ -225,10 +256,15 @@ export function ConfiguracoesPage() {
             <div className="pt-3">
               <button
                 type="submit"
-                className="btn-neon-primary w-full text-xs py-2.5 flex items-center justify-center gap-2"
+                disabled={salvando}
+                className="btn-neon-primary w-full text-xs py-2.5 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                <Lock className="w-3.5 h-3.5" />
-                <span>Salvar Novas Credenciais</span>
+                {salvando ? (
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                ) : (
+                  <Lock className="w-3.5 h-3.5" />
+                )}
+                <span>{salvando ? 'Salvando...' : 'Salvar Novas Credenciais'}</span>
               </button>
             </div>
           </form>

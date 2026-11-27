@@ -1,4 +1,3 @@
-﻿# -*- coding: utf-8 -*-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
@@ -8,23 +7,24 @@ from app.routers import produtos, lotes, movimentacoes, vendas, dashboard
 settings = get_settings()
 
 app = FastAPI(
-    title="SpeedToBox - API de Gestao de Estoque e PDV",
+    title="SpeedToBox â€” API de GestÃ£o de Estoque & PDV",
     description="""
 ## Sistema Integrado de Controle de Estoque, Lotes, Validades e Vendas
+### Sistema de Gestão Empresarial
 
-Esta API prove os servicos de negocio, persistencia relacional e transacoes para o SpeedToBox:
-* **Produtos:** Gestao de catalogo, precificacao e alertas de estoque minimo.
-* **Lotes & Validades:** Controle sanitario preventivo e ordenacao FIFO.
-* **Movimentacoes:** Rastreamento completo de entradas, perdas, avarias e baixas.
-* **Vendas & PDV:** Baixa atomica de saldo e registro comercial financeiro.
-* **Dashboard:** Consolidacao de metricas em tempo real e indicadores operacionais.
+Esta API provÃª os serviÃ§os de negÃ³cio, persistÃªncia relacional e transaÃ§Ãµes para o SpeedToBox:
+* **Produtos:** GestÃ£o de catÃ¡logo, precificaÃ§Ã£o e alertas de estoque mÃ­nimo.
+* **Lotes & Validades:** Controle sanitÃ¡rio preventivo e ordenaÃ§Ã£o FIFO.
+* **MovimentaÃ§Ãµes:** Rastreamento completo de entradas, perdas, avarias e baixas.
+* **Vendas & PDV:** Baixa atÃ´mica de saldo e registro comercial financeiro.
+* **Dashboard:** ConsolidaÃ§Ã£o de mÃ©tricas em tempo real e indicadores operacionais.
     """,
     version=settings.VERSION,
     docs_url="/docs",
     redoc_url="/redoc"
 )
 
-# Configuracao de CORS para permitir requisicoes do Frontend Next.js
+# ConfiguraÃ§Ã£o de CORS para permitir requisiÃ§Ãµes do Frontend Next.js
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origins_list,
@@ -42,12 +42,12 @@ app.include_router(dashboard.router, prefix=settings.API_V1_STR)
 
 @app.get("/", include_in_schema=False)
 def root_redirect():
-    """Redireciona para a documentacao interativa Swagger."""
+    """Redireciona a raiz diretamente para a documentaÃ§Ã£o interativa Swagger."""
     return RedirectResponse(url="/docs")
 
 @app.get("/health", tags=["Status"])
 def health_check():
-    """Endpoint de checagem de saude da API."""
+    """Endpoint de checagem de saÃºde da API."""
     return {
         "status": "online",
         "service": settings.PROJECT_NAME,

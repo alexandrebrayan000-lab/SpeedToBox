@@ -10,7 +10,30 @@ class VendaService:
     @staticmethod
     def listar_todas() -> List[dict]:
         res = db.from_("vendas").select("*, itens_venda(*)").order("created_at", desc=True).execute()
-        return res.data or []
+        vendas = res.data or []
+        # Normaliza chave itens_venda → itens para o VendaResponse
+        resultado = []
+        for v in vendas:
+            itens_raw = v.get("itens_venda") or []
+            itens = [
+                {
+                    "produto_id": str(i.get("produto_id", "")),
+                    "quantidade": float(i.get("quantidade", 0)),
+                    "preco_unitario": float(i.get("preco_unitario", 0)),
+                    "subtotal": float(i.get("subtotal", 0)),
+                }
+                for i in itens_raw
+            ]
+            resultado.append({
+                "id": v["id"],
+                "codigo": v.get("codigo", ""),
+                "data_hora": v.get("data_hora", ""),
+                "valor_total": float(v.get("valor_total", 0)),
+                "forma_pagamento": v.get("forma_pagamento", "PIX"),
+                "status": v.get("status", "concluida"),
+                "itens": itens,
+            })
+        return resultado
 
     @staticmethod
     def registrar_venda(dados: VendaCreate) -> dict:
