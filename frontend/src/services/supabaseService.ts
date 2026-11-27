@@ -476,6 +476,78 @@ export const supabaseService = {
     return { sucesso: false, erro: 'Nome de usuário ou senha inválidos.' };
   },
 
+  async loginComGoogle(): Promise<{ sucesso: boolean; erro?: string }> {
+    if (!isSupabaseConfigured || !supabase) {
+      return { sucesso: false, erro: 'Supabase não está configurado neste ambiente.' };
+    }
+    const redirectTo = typeof window !== 'undefined' ? window.location.origin : undefined;
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo,
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'select_account'
+        }
+      }
+    });
+    if (error) {
+      return { sucesso: false, erro: `Erro ao conectar com Google: ${error.message}` };
+    }
+    return { sucesso: true };
+  },
+
+  async sincronizarSessaoOAuth(): Promise<Usuario | null> {
+    if (!isSupabaseConfigured || !supabase) return null;
+    try {
+      const { data: { session }, error } = await supabase.auth.getSession();
+      if (error || !session?.user) return null;
+
+      const authUser = session.user;
+      const email = (authUser.email || '').toLowerCase();
+      const meta = (authUser.user_metadata || {}) as Record<string, unknown>;
+      const nome = String(meta.full_name || meta.name || email.split('@')[0] || 'Usuário Google');
+      const avatarUrl = meta.avatar_url ? String(meta.avatar_url) : meta.picture ? String(meta.picture) : undefined;
+      const username = email ? email.split('@')[0].replace(/[^a-z0-9._-]/gi, '') : `user_${authUser.id.slice(0, 6)}`;
+
+      // Garante registro do usuário na tabela `usuarios` do Supabase
+      if (email) {
+        const { data: existing } = await supabase
+          .from('usuarios')
+          .select('id, nome, cargo, avatar_url')
+          .eq('email', email)
+          .maybeSingle();
+
+        if (!existing) {
+          await supabase.from('usuarios').insert([
+            {
+              id: authUser.id,
+              estabelecimento_id: ESTABELECIMENTO_PADRAO_ID,
+              nome,
+              cargo: 'Gestor de Estoque',
+              email,
+              avatar_url: avatarUrl || null
+            }
+          ]);
+        }
+      }
+
+      const usuario: Usuario = {
+        id: authUser.id,
+        nome,
+        username,
+        cargo: 'Gestor de Estoque',
+        email,
+        avatarUrl
+      };
+      saveActiveSession(usuario);
+      return usuario;
+    } catch (err) {
+      console.warn('Erro ao sincronizar sessão OAuth:', err);
+      return null;
+    }
+  },
+
   async logoutUsuario(): Promise<void> {
     if (typeof window !== 'undefined') {
       localStorage.removeItem(STORAGE_SESSION_KEY);

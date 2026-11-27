@@ -16,6 +16,7 @@ import {
   Usuario
 } from '../types';
 import { supabaseService } from '../services/supabaseService';
+import { supabase } from '../lib/supabase';
 
 interface StoreContextType {
   produtos: Produto[];
@@ -33,6 +34,7 @@ interface StoreContextType {
   setUsuario: React.Dispatch<React.SetStateAction<Usuario | null>>;
   recarregarUsuario: () => Promise<void>;
   loginUsuario: (dados: { username: string; senha: string }) => Promise<{ sucesso: boolean; erro?: string }>;
+  loginComGoogle: () => Promise<{ sucesso: boolean; erro?: string }>;
   cadastrarUsuario: (dados: { nome: string; email: string; username: string; senha: string }) => Promise<{ sucesso: boolean; erro?: string }>;
   logoutUsuario: () => Promise<void>;
 
@@ -125,6 +127,11 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   const recarregarUsuario = React.useCallback(async () => {
     try {
+      const sessaoOAuth = await supabaseService.sincronizarSessaoOAuth();
+      if (sessaoOAuth) {
+        setUsuario(sessaoOAuth);
+        return;
+      }
       const sessao = supabaseService.getUsuarioSessao();
       setUsuario(sessao);
     } catch (error) {
@@ -145,6 +152,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     },
     []
   );
+
+  const loginComGoogle = React.useCallback(async () => {
+    return await supabaseService.loginComGoogle();
+  }, []);
 
   const cadastrarUsuario = React.useCallback(
     async (dados: { nome: string; email: string; username: string; senha: string }) => {
@@ -271,6 +282,19 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     }
 
     sincronizarComBackend();
+
+    const authSubscription = supabase?.auth.onAuthStateChange(async (event) => {
+      if (event === 'SIGNED_IN') {
+        const sessaoOAuth = await supabaseService.sincronizarSessaoOAuth();
+        if (sessaoOAuth) {
+          setUsuario(sessaoOAuth);
+        }
+      }
+    });
+
+    return () => {
+      authSubscription?.data?.subscription?.unsubscribe();
+    };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -632,6 +656,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         setUsuario,
         recarregarUsuario,
         loginUsuario,
+        loginComGoogle,
         cadastrarUsuario,
         logoutUsuario,
         isNovaVendaOpen,
